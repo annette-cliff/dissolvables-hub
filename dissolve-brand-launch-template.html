@@ -1,0 +1,2420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Brand Launch Playbook — Dissolvable Personal Care</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --bg: #faf9f6;
+    --bg2: #f2f0ea;
+    --bg3: #e8e5db;
+    --ink: #1a1915;
+    --ink2: #4a4840;
+    --ink3: #8a8478;
+    --accent: #2d6a4f;
+    --accent2: #40916c;
+    --accent-light: #d8f3dc;
+    --amber: #b5451b;
+    --amber-light: #fde8dc;
+    --blue: #1d4e89;
+    --blue-light: #dbeafe;
+    --purple: #553c9a;
+    --purple-light: #ede9fe;
+    --coral: #c05621;
+    --coral-light: #fef3c7;
+    --border: #ddd9ce;
+    --radius: 6px;
+    --serif: 'DM Serif Display', Georgia, serif;
+    --sans: 'DM Sans', system-ui, sans-serif;
+    --mono: 'DM Mono', monospace;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.65;
+    min-height: 100vh;
+  }
+
+  /* ── SETUP OVERLAY ── */
+  #setup-overlay {
+    position: fixed; inset: 0;
+    background: rgba(26,25,21,0.85);
+    backdrop-filter: blur(4px);
+    z-index: 9999;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    overflow-y: auto;
+    padding: 40px 20px;
+  }
+  #setup-overlay.hidden { display: none; }
+  .setup-card {
+    background: var(--bg);
+    border-radius: 12px;
+    padding: 36px 40px;
+    max-width: 560px;
+    width: 100%;
+    border: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  .setup-card h2 {
+    font-family: var(--serif);
+    font-size: 26px;
+    margin-bottom: 8px;
+  }
+  .setup-card p {
+    font-size: 13.5px;
+    color: var(--ink3);
+    margin-bottom: 20px;
+    line-height: 1.6;
+  }
+  .setup-step {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    font-size: 13px;
+    color: var(--ink2);
+    line-height: 1.6;
+  }
+  .setup-step strong { color: var(--ink); }
+  .setup-step code {
+    background: var(--bg3);
+    border-radius: 4px;
+    padding: 1px 6px;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--accent);
+    user-select: all;
+  }
+  .setup-fields { margin-top: 20px; display: flex; flex-direction: column; gap: 10px; }
+  .setup-fields label { font-size: 12px; font-family: var(--mono); color: var(--ink3); margin-bottom: 3px; display: block; }
+  .setup-fields input {
+    width: 100%;
+    padding: 9px 12px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 13px;
+    font-family: var(--mono);
+    background: white;
+    color: var(--ink);
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  .setup-fields input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(45,106,79,0.15);
+  }
+  .setup-error {
+    font-size: 12px;
+    color: #b91c1c;
+    font-family: var(--mono);
+    margin-top: 6px;
+    display: none;
+  }
+  .setup-error.visible { display: block; }
+  .setup-actions { display: flex; gap: 8px; margin-top: 16px; align-items: center; }
+  .btn-connect {
+    padding: 9px 20px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    font-family: var(--sans);
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .btn-connect:hover { background: var(--accent2); }
+  .btn-connect:disabled { opacity: 0.6; cursor: not-allowed; }
+  .btn-skip {
+    font-size: 12px;
+    color: var(--ink3);
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-family: var(--sans);
+    text-decoration: underline;
+  }
+  .sql-block {
+    background: #1a1915;
+    color: #95d5b2;
+    border-radius: 8px;
+    padding: 14px 16px;
+    font-family: var(--mono);
+    font-size: 11.5px;
+    line-height: 1.7;
+    margin: 10px 0;
+    overflow-x: auto;
+    white-space: pre;
+    user-select: all;
+  }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    position: fixed;
+    top: 0; left: 0;
+    width: 240px;
+    height: 100vh;
+    background: var(--bg2);
+    border-right: 1px solid var(--border);
+    padding: 24px 0;
+    overflow-y: auto;
+    z-index: 100;
+  }
+  .sidebar-logo {
+    padding: 0 20px 20px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 12px;
+  }
+  .sidebar-logo .brand {
+    font-family: var(--serif);
+    font-size: 15px;
+    color: var(--accent);
+    letter-spacing: 0.02em;
+  }
+  .sidebar-logo .sub {
+    font-size: 11px;
+    color: var(--ink3);
+    font-family: var(--mono);
+    margin-top: 2px;
+  }
+  .nav-section {
+    padding: 6px 12px 2px;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--ink3);
+    font-family: var(--mono);
+  }
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 20px;
+    font-size: 13.5px;
+    color: var(--ink2);
+    cursor: pointer;
+    border-radius: 4px;
+    margin: 1px 8px;
+    text-decoration: none;
+    transition: background 0.15s;
+  }
+  .nav-item:hover { background: var(--bg3); color: var(--ink); }
+  .nav-item.active { background: var(--accent-light); color: var(--accent); font-weight: 500; }
+  .nav-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+
+  /* ── DB STATUS pill in sidebar ── */
+  .db-pill {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-family: var(--mono);
+    padding: 4px 10px;
+    border-radius: 20px;
+    margin: 0 12px;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: all 0.15s;
+  }
+  .db-pill.connected { background: var(--accent-light); color: var(--accent); border-color: #95d5b2; }
+  .db-pill.offline { background: var(--amber-light); color: var(--amber); border-color: #f4a261; }
+  .db-pill.connecting { background: var(--blue-light); color: var(--blue); border-color: #93c5fd; }
+  .db-pill.error { background: #fee2e2; color: #b91c1c; border-color: #fca5a5; }
+  .db-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+  .db-pill.connected .db-dot { background: var(--accent); }
+  .db-pill.offline .db-dot { background: var(--amber); }
+  .db-pill.error .db-dot { background: #b91c1c; }
+
+  /* ── MAIN ── */
+  .main { margin-left: 240px; min-height: 100vh; }
+  .topbar {
+    position: sticky; top: 0;
+    background: rgba(250,249,246,0.92);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 50;
+  }
+  .breadcrumb { font-size: 13px; color: var(--ink3); font-family: var(--mono); }
+  .breadcrumb span { color: var(--ink); }
+  .topbar-actions { display: flex; gap: 8px; align-items: center; }
+
+  #sync-status {
+    font-size: 11px;
+    font-family: var(--mono);
+    color: var(--ink3);
+    min-width: 80px;
+    text-align: right;
+  }
+  #sync-status.saving { color: var(--amber); }
+  #sync-status.saved  { color: var(--accent); }
+  #sync-status.error  { color: #b91c1c; }
+
+  .btn-sm {
+    padding: 5px 12px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    font-family: var(--sans);
+    border: 1px solid var(--border);
+    background: white;
+    cursor: pointer;
+    color: var(--ink2);
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .btn-sm:hover { background: var(--bg2); border-color: var(--ink3); }
+  .btn-sm.primary { background: var(--accent); color: white; border-color: var(--accent); }
+  .btn-sm.primary:hover { background: var(--accent2); }
+  .btn-sm.danger { background: #fee2e2; color: #b91c1c; border-color: #fca5a5; }
+  .btn-sm.danger:hover { background: #fecaca; }
+
+  /* ── EDIT MODE ── */
+  .edit-mode [contenteditable] {
+    outline: none;
+    border-radius: 3px;
+    transition: background 0.15s, box-shadow 0.15s;
+    min-width: 20px;
+    display: inline-block;
+  }
+  .edit-mode [contenteditable]:hover { background: rgba(45,106,79,0.07); }
+  .edit-mode [contenteditable]:focus {
+    background: rgba(45,106,79,0.1);
+    box-shadow: 0 0 0 2px rgba(45,106,79,0.25);
+  }
+  #edit-indicator {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 11px; font-family: var(--mono); color: var(--accent);
+    opacity: 0; transition: opacity 0.2s;
+  }
+  #edit-indicator.visible { opacity: 1; }
+  #edit-indicator .dot {
+    width: 6px; height: 6px; border-radius: 50%; background: var(--accent);
+    animation: pulse 1.5s ease-in-out infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+  .add-task-btn {
+    display: none; align-items: center; gap: 6px;
+    margin: 4px 10px; padding: 5px 10px;
+    font-size: 12px; color: var(--ink3); cursor: pointer;
+    border-radius: 4px; border: 1px dashed var(--border);
+    background: none; font-family: var(--sans);
+    width: calc(100% - 20px); transition: all 0.15s;
+  }
+  .add-task-btn:hover { background: var(--bg2); color: var(--accent); border-color: var(--accent); }
+  .edit-mode .add-task-btn { display: flex; }
+
+  /* ── SAVE TOAST ── */
+  #save-toast {
+    position: fixed; bottom: 28px; right: 28px;
+    background: var(--ink); color: white;
+    font-size: 12px; font-family: var(--mono);
+    padding: 8px 16px; border-radius: 20px;
+    opacity: 0; transform: translateY(8px);
+    transition: opacity 0.2s, transform 0.2s;
+    pointer-events: none; z-index: 999;
+  }
+  #save-toast.show { opacity: 1; transform: translateY(0); }
+
+  /* ── CONTENT ── */
+  .content { max-width: 860px; margin: 0 auto; padding: 52px 48px 120px; }
+  .page-emoji { font-size: 48px; margin-bottom: 12px; display: block; }
+  .page-title { font-family: var(--serif); font-size: 42px; line-height: 1.15; color: var(--ink); margin-bottom: 6px; }
+  .page-subtitle { color: var(--ink3); font-size: 14px; margin-bottom: 36px; font-family: var(--mono); }
+
+  .callout {
+    border-radius: var(--radius); padding: 14px 18px; margin: 20px 0;
+    display: flex; gap: 12px; align-items: flex-start; font-size: 14px;
+  }
+  .callout-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+  .callout-body { flex: 1; }
+  .callout-body strong { font-weight: 600; }
+  .callout.green { background: var(--accent-light); border: 1px solid #95d5b2; }
+  .callout.amber { background: var(--amber-light); border: 1px solid #f4a261; }
+  .callout.blue  { background: var(--blue-light);  border: 1px solid #93c5fd; }
+  .callout.purple { background: var(--purple-light); border: 1px solid #c4b5fd; }
+  .callout.gray  { background: var(--bg2); border: 1px solid var(--border); }
+
+  .section { margin: 48px 0 0; }
+  .section-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 3px 10px; border-radius: 30px;
+    font-size: 11px; font-weight: 600; font-family: var(--mono);
+    text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px;
+  }
+  .badge-green  { background: var(--accent-light); color: var(--accent); }
+  .badge-amber  { background: var(--amber-light); color: var(--amber); }
+  .badge-blue   { background: var(--blue-light); color: var(--blue); }
+  .badge-purple { background: var(--purple-light); color: var(--purple); }
+  .badge-coral  { background: var(--coral-light); color: var(--coral); }
+  .badge-gray   { background: var(--bg3); color: var(--ink2); }
+  .section-title { font-family: var(--serif); font-size: 26px; color: var(--ink); margin-bottom: 4px; }
+  .section-desc { font-size: 13.5px; color: var(--ink3); margin-bottom: 20px; font-style: italic; }
+  .divider { border: none; border-top: 1px solid var(--border); margin: 36px 0; }
+
+  .checklist { list-style: none; display: flex; flex-direction: column; gap: 2px; }
+  .check-item {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 7px 10px; border-radius: 4px;
+    font-size: 14px; line-height: 1.5; cursor: pointer;
+    transition: background 0.1s; user-select: none;
+  }
+  .check-item:hover { background: var(--bg2); }
+  .check-item input[type="checkbox"] { margin-top: 3px; accent-color: var(--accent); cursor: pointer; flex-shrink: 0; }
+  .check-item label { cursor: pointer; flex: 1; }
+  .check-item.done label { text-decoration: line-through; color: var(--ink3); }
+  .check-tag {
+    font-size: 10px; font-family: var(--mono); padding: 1px 6px;
+    border-radius: 3px; font-weight: 500; flex-shrink: 0; margin-top: 3px;
+  }
+  .tag-now    { background: #fee2e2; color: #b91c1c; }
+  .tag-q3     { background: var(--amber-light); color: var(--amber); }
+  .tag-q4     { background: var(--blue-light); color: var(--blue); }
+  .tag-launch { background: var(--accent-light); color: var(--accent); }
+
+  .data-table { width: 100%; border-collapse: collapse; font-size: 13.5px; margin: 12px 0; }
+  .data-table th {
+    text-align: left; padding: 8px 12px;
+    font-size: 11px; font-family: var(--mono); font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink3);
+    border-bottom: 1px solid var(--border); background: var(--bg2);
+  }
+  .data-table td { padding: 9px 12px; border-bottom: 1px solid var(--bg3); color: var(--ink2); vertical-align: top; }
+  .data-table tr:last-child td { border-bottom: none; }
+  .data-table tr:hover td { background: var(--bg2); }
+
+  .card-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 16px 0; }
+  .card { background: white; border: 1px solid var(--border); border-radius: 8px; padding: 16px 18px; }
+  .card-title { font-weight: 600; font-size: 13.5px; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+  .card p { font-size: 13px; color: var(--ink3); line-height: 1.55; }
+
+  .timeline { position: relative; padding-left: 28px; margin: 20px 0; }
+  .timeline::before {
+    content: ''; position: absolute; left: 7px; top: 8px; bottom: 8px;
+    width: 2px; background: var(--border); border-radius: 1px;
+  }
+  .tl-item { position: relative; margin-bottom: 20px; }
+  .tl-dot {
+    position: absolute; left: -24px; top: 5px;
+    width: 14px; height: 14px; border-radius: 50%;
+    border: 2px solid white; box-shadow: 0 0 0 2px var(--border);
+  }
+  .tl-dot.green  { background: var(--accent); box-shadow: 0 0 0 2px var(--accent); }
+  .tl-dot.amber  { background: var(--amber); box-shadow: 0 0 0 2px var(--amber); }
+  .tl-dot.blue   { background: var(--blue); box-shadow: 0 0 0 2px var(--blue); }
+  .tl-dot.purple { background: var(--purple); box-shadow: 0 0 0 2px var(--purple); }
+  .tl-dot.coral  { background: var(--coral); box-shadow: 0 0 0 2px var(--coral); }
+  .tl-dot.launch { background: var(--ink); box-shadow: 0 0 0 2px var(--ink); }
+  .tl-month { font-family: var(--mono); font-size: 11px; color: var(--ink3); margin-bottom: 2px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.06em; }
+  .tl-title { font-weight: 600; font-size: 14px; margin-bottom: 4px; }
+  .tl-tasks { font-size: 13px; color: var(--ink2); line-height: 1.6; }
+  .tl-tasks li { padding: 1px 0; padding-left: 14px; position: relative; }
+  .tl-tasks li::before { content: '–'; position: absolute; left: 0; color: var(--ink3); }
+
+  .highlight-block {
+    border-left: 3px solid var(--accent); padding: 10px 16px;
+    background: var(--accent-light); border-radius: 0 6px 6px 0;
+    font-size: 13.5px; color: var(--ink2); margin: 12px 0; line-height: 1.6;
+  }
+  .budget-row-total td {
+    font-weight: 600; border-top: 2px solid var(--border) !important;
+    color: var(--ink); background: var(--bg2);
+  }
+  .progress-wrap { margin: 8px 0 16px; }
+  .progress-label { display: flex; justify-content: space-between; font-size: 12px; color: var(--ink3); font-family: var(--mono); margin-bottom: 4px; }
+  .progress-bar { height: 6px; background: var(--bg3); border-radius: 3px; overflow: hidden; }
+  .progress-fill { height: 100%; border-radius: 3px; background: var(--accent); transition: width 0.5s ease; }
+  .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 16px 0; }
+  .kpi-card { background: white; border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; text-align: center; }
+  .kpi-value { font-family: var(--serif); font-size: 28px; line-height: 1; margin-bottom: 4px; }
+  .kpi-label { font-size: 11px; color: var(--ink3); font-family: var(--mono); text-transform: uppercase; letter-spacing: 0.06em; }
+
+
+  /* ── CONTENT CALENDAR ── */
+  .cal-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+    margin: 12px 0;
+  }
+  .cal-day-header {
+    font-size: 10px;
+    font-family: var(--mono);
+    color: var(--ink3);
+    text-align: center;
+    padding: 4px 0;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .cal-day {
+    min-height: 72px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 5px;
+    background: white;
+    font-size: 11px;
+    cursor: pointer;
+    transition: background 0.1s;
+    position: relative;
+  }
+  .cal-day:hover { background: var(--bg2); }
+  .cal-day.empty { background: var(--bg2); border-color: transparent; cursor: default; }
+  .cal-day.today { border-color: var(--accent); }
+  .cal-day-num {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink3);
+    margin-bottom: 3px;
+  }
+  .cal-day.today .cal-day-num { color: var(--accent); font-weight: 600; }
+  .cal-event {
+    font-size: 10px;
+    padding: 2px 4px;
+    border-radius: 3px;
+    margin-bottom: 2px;
+    line-height: 1.3;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    cursor: pointer;
+  }
+  .cal-event.social   { background: var(--purple-light); color: var(--purple); }
+  .cal-event.email    { background: var(--blue-light); color: var(--blue); }
+  .cal-event.blog     { background: var(--accent-light); color: var(--accent); }
+  .cal-event.paid     { background: var(--amber-light); color: var(--amber); }
+  .cal-event.launch   { background: var(--coral-light); color: var(--coral); }
+  .cal-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  .cal-nav button {
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 4px 10px;
+    cursor: pointer;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--ink2);
+    transition: background 0.1s;
+  }
+  .cal-nav button:hover { background: var(--bg2); }
+  .cal-month-label {
+    font-family: var(--serif);
+    font-size: 18px;
+    color: var(--ink);
+  }
+  .cal-legend {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+    font-size: 11px;
+    font-family: var(--mono);
+  }
+  .cal-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .cal-legend-dot {
+    width: 8px; height: 8px;
+    border-radius: 2px;
+  }
+
+  /* ── EVENT MODAL ── */
+  .event-modal-backdrop {
+    position: fixed; inset: 0;
+    background: rgba(26,25,21,0.5);
+    z-index: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .event-modal-backdrop.hidden { display: none; }
+  .event-modal {
+    background: var(--bg);
+    border-radius: 10px;
+    padding: 24px 28px;
+    width: 380px;
+    border: 1px solid var(--border);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+  }
+  .event-modal h3 { font-family: var(--serif); font-size: 20px; margin-bottom: 16px; }
+  .event-modal label { font-size: 11px; font-family: var(--mono); color: var(--ink3); display: block; margin-bottom: 3px; margin-top: 10px; }
+  .event-modal input, .event-modal select, .event-modal textarea {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    font-size: 13px;
+    font-family: var(--sans);
+    background: white;
+    color: var(--ink);
+    outline: none;
+  }
+  .event-modal input:focus, .event-modal select:focus, .event-modal textarea:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(45,106,79,0.15);
+  }
+  .event-modal textarea { resize: vertical; min-height: 60px; }
+  .event-modal-actions { display: flex; gap: 8px; margin-top: 16px; justify-content: flex-end; }
+
+  /* ── EMAIL FLOWS ── */
+  .email-flow-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 12px 0;
+  }
+  .email-flow-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .email-flow-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.1s;
+  }
+  .email-flow-header:hover { background: var(--bg2); }
+  .email-flow-title { font-weight: 600; font-size: 14px; display: flex; align-items: center; gap: 8px; }
+  .email-flow-meta { font-size: 11px; font-family: var(--mono); color: var(--ink3); }
+  .email-flow-body { display: none; border-top: 1px solid var(--border); padding: 14px 16px; }
+  .email-flow-card.open .email-flow-body { display: block; }
+  .email-step {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 10px;
+    align-items: flex-start;
+    font-size: 13px;
+  }
+  .email-step:last-child { margin-bottom: 0; }
+  .email-step-num {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    font-size: 10px;
+    font-family: var(--mono);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .email-step-content { flex: 1; }
+  .email-step-subject { font-weight: 500; }
+  .email-step-timing { font-size: 11px; color: var(--ink3); font-family: var(--mono); }
+
+  /* ── LINKS / RESOURCES ── */
+  .links-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin: 12px 0;
+  }
+  .link-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 13.5px;
+    transition: background 0.1s;
+    group: true;
+  }
+  .link-row:hover { background: var(--bg2); }
+  .link-icon { font-size: 16px; flex-shrink: 0; }
+  .link-info { flex: 1; min-width: 0; }
+  .link-title { font-weight: 500; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .link-url { font-size: 11px; color: var(--ink3); font-family: var(--mono); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .link-tag {
+    font-size: 10px;
+    font-family: var(--mono);
+    padding: 2px 7px;
+    border-radius: 30px;
+    flex-shrink: 0;
+    font-weight: 500;
+  }
+  .link-actions { display: flex; gap: 4px; flex-shrink: 0; }
+  .link-btn {
+    padding: 3px 8px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    font-size: 11px;
+    background: white;
+    cursor: pointer;
+    color: var(--ink2);
+    font-family: var(--sans);
+    text-decoration: none;
+    transition: background 0.1s;
+  }
+  .link-btn:hover { background: var(--bg3); }
+  .link-btn.danger:hover { background: #fee2e2; color: #b91c1c; border-color: #fca5a5; }
+  .add-row-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 9px 14px;
+    border: 1px dashed var(--border);
+    border-radius: 6px;
+    background: none;
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--ink3);
+    font-family: var(--sans);
+    width: 100%;
+    transition: all 0.15s;
+  }
+  .add-row-btn:hover { background: var(--bg2); color: var(--accent); border-color: var(--accent); }
+
+  /* ── PRODUCT TABLE ── */
+  .product-table-wrap {
+    overflow-x: auto;
+    margin: 12px 0;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+  .product-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    min-width: 900px;
+  }
+  .product-table th {
+    padding: 10px 12px;
+    font-size: 10px;
+    font-family: var(--mono);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ink3);
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    text-align: left;
+    white-space: nowrap;
+  }
+  .product-table td {
+    padding: 9px 12px;
+    border-bottom: 1px solid var(--bg3);
+    color: var(--ink2);
+    vertical-align: middle;
+  }
+  .product-table tr:last-child td { border-bottom: none; }
+  .product-table tr:hover td { background: var(--bg2); }
+  .product-table td[contenteditable="true"]:focus {
+    background: rgba(45,106,79,0.08);
+    outline: none;
+    box-shadow: inset 0 0 0 2px rgba(45,106,79,0.2);
+  }
+  .stock-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 30px;
+    font-size: 10px;
+    font-family: var(--mono);
+    font-weight: 600;
+  }
+  .stock-ok     { background: var(--accent-light); color: var(--accent); }
+  .stock-low    { background: var(--amber-light); color: var(--amber); }
+  .stock-out    { background: #fee2e2; color: #b91c1c; }
+  .stock-tbd    { background: var(--bg3); color: var(--ink3); }
+  .add-product-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 16px;
+    border: none;
+    border-top: 1px dashed var(--border);
+    background: var(--bg2);
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--ink3);
+    font-family: var(--sans);
+    width: 100%;
+    border-radius: 0 0 8px 8px;
+    transition: all 0.15s;
+  }
+  .add-product-btn:hover { background: var(--bg3); color: var(--accent); }
+
+  /* ── MODAL SHARED ── */
+  .modal-backdrop {
+    position: fixed; inset: 0;
+    background: rgba(26,25,21,0.5);
+    z-index: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+  .modal-backdrop.hidden { display: none; }
+  .modal-box {
+    background: var(--bg);
+    border-radius: 10px;
+    padding: 24px 28px;
+    width: 100%;
+    max-width: 480px;
+    border: 1px solid var(--border);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+  .modal-box h3 { font-family: var(--serif); font-size: 20px; margin-bottom: 16px; }
+  .modal-field { margin-bottom: 12px; }
+  .modal-field label { font-size: 11px; font-family: var(--mono); color: var(--ink3); display: block; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.06em; }
+  .modal-field input, .modal-field select, .modal-field textarea {
+    width: 100%; padding: 8px 10px;
+    border: 1px solid var(--border); border-radius: 5px;
+    font-size: 13px; font-family: var(--sans);
+    background: white; color: var(--ink); outline: none;
+  }
+  .modal-field input:focus, .modal-field select:focus, .modal-field textarea:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(45,106,79,0.15);
+  }
+  .modal-field textarea { resize: vertical; min-height: 60px; }
+  .modal-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .modal-actions { display: flex; gap: 8px; margin-top: 16px; justify-content: flex-end; }
+
+  @media print { .sidebar, .topbar, #setup-overlay, #save-toast { display: none; } .main { margin-left: 0; } .content { padding: 24px; } }
+</style>
+</head>
+<body>
+
+<!-- ── SUPABASE SETUP OVERLAY ── -->
+<div id="setup-overlay">
+  <div class="setup-card">
+    <h2>🔌 Connect to Supabase</h2>
+    <p>This takes about 3 minutes. Your playbook will then sync across every device and browser automatically — just open the GitHub Pages URL anywhere.</p>
+
+    <div class="setup-step">
+      <strong>Step 1</strong> — Go to <a href="https://supabase.com" target="_blank" style="color:var(--accent)">supabase.com</a>, create a free account, and start a new project.
+    </div>
+
+    <div class="setup-step">
+      <strong>Step 2</strong> — In your Supabase project, open the <strong>SQL Editor</strong> and run this query to create the playbook table:
+      <div class="sql-block">CREATE TABLE IF NOT EXISTS playbook (
+  id TEXT PRIMARY KEY,
+  data JSONB NOT NULL,
+  updated_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- Allow anonymous reads and writes (public playbook)
+ALTER TABLE playbook ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "public read"  ON playbook FOR SELECT USING (true);
+CREATE POLICY "public write" ON playbook FOR INSERT WITH CHECK (true);
+CREATE POLICY "public update" ON playbook FOR UPDATE USING (true);</div>
+    </div>
+
+    <div class="setup-step">
+      <strong>Step 3</strong> — Go to <strong>Project Settings → API</strong>. Copy your <strong>Project URL</strong> and <strong>anon / public key</strong> and paste them below.
+    </div>
+
+    <div class="setup-fields">
+      <div>
+        <label>SUPABASE PROJECT URL</label>
+        <input type="text" id="inp-url" placeholder="https://xxxxxxxxxxxx.supabase.co" autocomplete="off" spellcheck="false">
+      </div>
+      <div>
+        <label>SUPABASE ANON KEY (public)</label>
+        <input type="text" id="inp-key" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." autocomplete="off" spellcheck="false">
+      </div>
+      <div id="setup-error" class="setup-error">Could not connect — check your URL and key and try again.</div>
+    </div>
+
+    <div class="setup-actions">
+      <button class="btn-connect" id="btn-connect" onclick="connectSupabase()">Connect & save credentials</button>
+      <button class="btn-skip" onclick="skipSetup()">Skip — use local storage only</button>
+    </div>
+  </div>
+</div>
+
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <div class="brand">🌿 Dissolve Brand Co.</div>
+    <div class="sub">Launch Playbook · v1.0</div>
+  </div>
+
+  <div class="nav-section">Overview</div>
+  <a class="nav-item active" href="#overview"><span class="nav-dot" style="background:#2d6a4f"></span> Dashboard</a>
+  <a class="nav-item" href="#timeline"><span class="nav-dot" style="background:#1d4e89"></span> Launch Timeline</a>
+
+  <div class="nav-section" style="margin-top:8px">Phases</div>
+  <a class="nav-item" href="#phase1"><span class="nav-dot" style="background:#2d6a4f"></span> Product & Formulation</a>
+  <a class="nav-item" href="#phase2"><span class="nav-dot" style="background:#553c9a"></span> Brand Identity</a>
+  <a class="nav-item" href="#phase3"><span class="nav-dot" style="background:#b5451b"></span> Legal & Compliance</a>
+  <a class="nav-item" href="#phase4"><span class="nav-dot" style="background:#1d4e89"></span> Store & Tech</a>
+  <a class="nav-item" href="#phase5"><span class="nav-dot" style="background:#c05621"></span> Marketing & Content</a>
+  <a class="nav-item" href="#phase6"><span class="nav-dot" style="background:#40916c"></span> Operations</a>
+
+  <div class="nav-section" style="margin-top:8px">Marketing</div>
+  <a class="nav-item" href="#mkt-calendar"><span class="nav-dot" style="background:#553c9a"></span> Content Calendar</a>
+  <a class="nav-item" href="#mkt-email"><span class="nav-dot" style="background:#1d4e89"></span> Email Flows</a>
+
+  <div class="nav-section" style="margin-top:8px">Resources</div>
+  <a class="nav-item" href="#links"><span class="nav-dot" style="background:#c05621"></span> Links & SOPs</a>
+
+  <div class="nav-section" style="margin-top:8px">Products</div>
+  <a class="nav-item" href="#products"><span class="nav-dot" style="background:#40916c"></span> Product Catalog</a>
+
+  <div class="nav-section" style="margin-top:8px">Finance</div>
+  <a class="nav-item" href="#budget"><span class="nav-dot" style="background:#8a8478"></span> Budget Tracker</a>
+  <a class="nav-item" href="#kpis"><span class="nav-dot" style="background:#8a8478"></span> Launch KPIs</a>
+
+  <div style="padding: 20px 20px 0; margin-top: auto; border-top: 1px solid var(--border); margin-top: 24px; padding-top: 16px;">
+    <div style="font-size:11px; color: var(--ink3); font-family: var(--mono);">Target launch</div>
+    <div style="font-weight:600; font-size:15px; color: var(--accent); font-family: var(--serif);">March 2027</div>
+    <div style="font-size:11px; color: var(--ink3); margin-top:2px; font-family: var(--mono);">~22 months to go</div>
+  </div>
+</aside>
+
+<!-- ── MAIN ── -->
+<main class="main">
+  <div class="topbar">
+    <div class="breadcrumb">Workspace / <span>Brand Launch Playbook</span></div>
+    <div class="topbar-actions">
+      <div id="sync-status"></div>
+      <div id="edit-indicator"><span class="dot"></span> editing</div>
+      <button class="btn-sm" id="btn-reset" onclick="resetData()" style="display:none">🗑 Reset</button>
+      <button class="btn-sm" onclick="window.print()">🖨 Print</button>
+      <button class="btn-sm" id="btn-edit" onclick="toggleEdit()">✏️ Edit</button>
+      <button class="btn-sm primary" id="btn-save" onclick="saveAll()" style="display:none">💾 Save changes</button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- ── HERO ── -->
+    <span class="page-emoji" id="overview">🌿</span>
+    <h1 class="page-title">Brand Launch Playbook</h1>
+    <div class="page-subtitle">Dissolvable Personal Care · Target Launch: March 2027 · Last updated: May 2026</div>
+
+    <div class="callout green">
+      <span class="callout-icon">💡</span>
+      <div class="callout-body">
+        <strong>How to use this template:</strong> Work through each phase in order. Check off tasks as you complete them. The timeline section maps every task to a specific month so you always know what to work on next.
+      </div>
+    </div>
+
+    <!-- ── PROGRESS ── -->
+    <div class="progress-wrap">
+      <div class="progress-label"><span>Overall launch readiness</span><span>0 / 87 tasks complete</span></div>
+      <div class="progress-bar"><div class="progress-fill" style="width: 0%"></div></div>
+    </div>
+
+    <div class="kpi-grid">
+      <div class="kpi-card"><div class="kpi-value" style="color:var(--accent)">22</div><div class="kpi-label">Months to launch</div></div>
+      <div class="kpi-card"><div class="kpi-value">6</div><div class="kpi-label">Core phases</div></div>
+      <div class="kpi-card"><div class="kpi-value">87</div><div class="kpi-label">Total tasks</div></div>
+      <div class="kpi-card"><div class="kpi-value" style="color:var(--amber)">Mar '27</div><div class="kpi-label">Launch date</div></div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- ══════════════════════════════
+         LAUNCH TIMELINE
+    ══════════════════════════════ -->
+    <div class="section" id="timeline">
+      <div class="section-badge badge-blue">📅 Timeline</div>
+      <h2 class="section-title">Month-by-Month Launch Plan</h2>
+      <div class="section-desc">May 2026 → March 2027. Every task mapped to a month.</div>
+
+      <div class="callout amber">
+        <span class="callout-icon">⚠️</span>
+        <div class="callout-body">
+          <strong>Critical path items</strong> are marked with 🔴. Delaying these will push your launch date. All other items have some float.
+        </div>
+      </div>
+
+      <div class="timeline">
+
+        <div class="tl-item">
+          <div class="tl-dot green"></div>
+          <div class="tl-month">May – June 2026</div>
+          <div class="tl-title">🏗 Foundation & Research</div>
+          <ul class="tl-tasks">
+            <li>🔴 Define your product line (which 3–5 SKUs to launch with)</li>
+            <li>🔴 Research contract manufacturers (CM) — request NDAs + intro calls</li>
+            <li>Conduct competitor analysis: Blueland, HiBar, Ethique, Bite</li>
+            <li>Identify your target customer persona (eco-conscious? budget-first? luxury?)</li>
+            <li>Register your business entity (LLC) and EIN</li>
+            <li>Open a dedicated business bank account</li>
+            <li>Begin trademark name search (USPTO TESS)</li>
+            <li>Hire a cosmetic formulation consultant or connect with a CM R&D team</li>
+          </ul>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-dot purple"></div>
+          <div class="tl-month">July – August 2026</div>
+          <div class="tl-title">🧪 Formulation & Brand Direction</div>
+          <ul class="tl-tasks">
+            <li>🔴 Sign contract manufacturer agreement — begin formulation development</li>
+            <li>🔴 File trademark application with USPTO ($250–350/class)</li>
+            <li>Commission first round of formula samples</li>
+            <li>Begin brand naming workshop (shortlist 10 → 3 → 1)</li>
+            <li>Define brand values, sustainability story, and positioning statement</li>
+            <li>Choose aesthetic direction: premium minimalist, playful eco, clinical clean?</li>
+            <li>Draft ingredient lists and begin EU/FDA compliance review</li>
+            <li>Decide: dissolvable pods, tablets, or bars? (affects packaging and COGS)</li>
+          </ul>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-dot amber"></div>
+          <div class="tl-month">September – October 2026</div>
+          <div class="tl-title">🎨 Brand Identity & Safety Testing</div>
+          <ul class="tl-tasks">
+            <li>🔴 Commission product safety assessments (PCPC, EU Cosmetics Regulation)</li>
+            <li>🔴 Finalize brand name, logo, and visual identity system</li>
+            <li>Design packaging (primary + secondary): must be plastic-free or minimal</li>
+            <li>Build brand guidelines doc (colors, fonts, voice, do's/don'ts)</li>
+            <li>Photograph sample products for early content creation</li>
+            <li>Commission 3D renders of packaging for pre-launch marketing</li>
+            <li>Register for FDA cosmetic facility registration (required post-MoCRA 2023)</li>
+            <li>Begin eco-claim substantiation documentation (no greenwashing)</li>
+          </ul>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-dot blue"></div>
+          <div class="tl-month">November – December 2026</div>
+          <div class="tl-title">🛒 Store Build & Pre-Launch Prep</div>
+          <ul class="tl-tasks">
+            <li>🔴 Build and soft-launch Shopify store (no traffic yet — internal review only)</li>
+            <li>🔴 Finalize production run quantity and place manufacturing order</li>
+            <li>Set up Klaviyo email flows: welcome, abandoned cart, post-purchase</li>
+            <li>Set up Gorgias or Zendesk for customer support</li>
+            <li>Configure subscription app (Recharge or Skio)</li>
+            <li>Set up Google Analytics 4 + Meta Pixel + TikTok Pixel</li>
+            <li>Build pre-launch waitlist landing page ("Be first to dissolve the norm")</li>
+            <li>Begin influencer outreach — identify 20 micro-creators (50k–300k) for seeding</li>
+            <li>Develop 10 SEO blog drafts (target long-tail: "best plastic-free shampoo")</li>
+            <li>Photograph final product for launch — lifestyle + product-on-white</li>
+          </ul>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-dot coral"></div>
+          <div class="tl-month">January – February 2027</div>
+          <div class="tl-title">🚀 Pre-Launch & Inventory Arrival</div>
+          <ul class="tl-tasks">
+            <li>🔴 Receive and QC first production run inventory</li>
+            <li>🔴 Ship inventory to 3PL warehouse (or set up self-fulfillment)</li>
+            <li>Seed product to influencers — embargo until launch week</li>
+            <li>Film hero "dissolve demo" video for TikTok and Reels</li>
+            <li>Write and schedule all launch-week emails (3–5 email sequence)</li>
+            <li>Build paid social creative: 5+ video ads, 3+ static ads</li>
+            <li>Set up Google Shopping feed and run test purchases</li>
+            <li>Brief customer support team on FAQs and returns policy</li>
+            <li>Do a full test order: place, fulfill, track, return</li>
+            <li>Set up affiliate/referral program (Impact or Refersion)</li>
+          </ul>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-dot launch"></div>
+          <div class="tl-month">March 2027</div>
+          <div class="tl-title">🌟 Launch Month</div>
+          <ul class="tl-tasks">
+            <li>🔴 Open store to public — send waitlist launch email</li>
+            <li>🔴 Go live on paid social (Meta + TikTok) Day 1</li>
+            <li>Influencer content goes live (coordinated embargo lift)</li>
+            <li>Publish first 5 SEO blog posts</li>
+            <li>Submit press release to sustainable beauty journalists</li>
+            <li>Monitor orders, fulfillment SLA, and CS tickets daily</li>
+            <li>Optimize paid ads weekly based on ROAS data</li>
+            <li>Collect first reviews — set up Okendo or Judge.me prompts</li>
+            <li>Launch referral program to early customers</li>
+            <li>Hold weekly team review: revenue, CAC, return rate, NPS</li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- ══════════════════════════════
+         PHASE 1: PRODUCT
+    ══════════════════════════════ -->
+    <div class="section" id="phase1">
+      <div class="section-badge badge-green">Phase 01</div>
+      <h2 class="section-title">Product & Formulation</h2>
+      <div class="section-desc">Getting your formulas right is the most important thing you'll do. Everything else depends on it.</div>
+
+      <div class="callout gray">
+        <span class="callout-icon">🧪</span>
+        <div class="callout-body">
+          Dissolvable formats include: <strong>compressed tablets</strong> (shampoo, conditioner, body wash), <strong>powder sachets</strong> (laundry, stain remover), <strong>solid bars</strong> (soap, face wash), and <strong>strip dissolvables</strong> (toothpaste). Choose your format before approaching manufacturers.
+        </div>
+      </div>
+
+      <h3 style="font-size:14px;font-weight:600;margin:20px 0 8px;color:var(--ink)">Product Line Decisions</h3>
+      <ul class="checklist">
+        <li class="check-item"><input type="checkbox"><label>Choose launch SKU count (recommend 3–5 hero products)</label><span class="check-tag tag-now">NOW</span></li>
+        <li class="check-item"><input type="checkbox"><label>Decide dissolvable format for each SKU (tablet, bar, powder, strip)</label><span class="check-tag tag-now">NOW</span></li>
+        <li class="check-item"><input type="checkbox"><label>Define scent/fragrance strategy (unscented, essential oils, synthetic fragrance-free?)</label><span class="check-tag tag-now">NOW</span></li>
+        <li class="check-item"><input type="checkbox"><label>Research pricing: target COGS and retail price per unit</label><span class="check-tag tag-now">NOW</span></li>
+        <li class="check-item"><input type="checkbox"><label>Decide on vegan, cruelty-free, and certification goals before formulation</label><span class="check-tag tag-q3">Q3 '26</span></li>
+      </ul>
+
+      <h3 style="font-size:14px;font-weight:600;margin:20px 0 8px;color:var(--ink)">Contract Manufacturing</h3>
+      <ul class="checklist">
+        <li class="check-item"><input type="checkbox"><label>Build a shortlist of 5+ contract manufacturers (CMs) who do dissolvable/solid formats</label><span class="check-tag tag-now">NOW</span></li>
+        <li class="check-item"><input type="checkbox"><label>Request NDAs and capability decks from top 3 CMs</label><span class="check-tag tag-now">NOW</span></li>
+        <li class="check-item"><input type="checkbox"><label>Evaluate CMs: MOQ, lead time, certifications (ISO, GMP), price per unit</label><span class="check-tag tag-q3">Q3 '26</span></li>
+        <li class="check-item"><input type="checkbox"><label>Sign manufacturing agreement and IP ownership clause</label><span class="check-tag tag-q3">Q3 '26</span></li>
+        <li class="check-item"><input type="checkbox"><label>Begin R&D and formulation development with chosen CM</label><span class="check-tag tag-q3">Q3 '26</span></li>
+        <li class="check-item"><input type="checkbox"><label>Review and approve first formula samples</label><span class="check-tag tag-q4">Q4 '26</span></li>
+        <li class="check-item"><input type="checkbox"><label>Complete stability testing (12-week minimum for new formulas)</label><span class="check-tag tag-q4">Q4 '26</span></li>
+        <li class="check-item"><input type="checkbox"><label>Finalize product safety assessments (required for sale in US + EU)</label><span class="check-tag tag-q4">Q4 '26</span></li>
+        <li class="check-item"><input type="checkbox"><label>Place production order for launch quantity</label><span class="check-tag tag-q4">Q4 '26</span></li>
+      </ul>
+
+      <h3 style="font-size:14px;font-weight:600;margin:20px 0 8px;color:var(--ink)">Certifications to Consider</h3>
+      <table class="data-table">
+        <thead><tr><th>Certification</th><th>Why it matters</th><th>Cost range</th><th>Timeline</th></tr></thead>
+        <tbody>
+          <tr><td>COSMOS / ECOCERT Organic</td><td>EU retail and premium positioning</td><td>$1,000–5,000/yr</td><td>3–6 months</td></tr>
+          <tr><td>Leaping Bunny / PETA Vegan</td><td>Cruelty-free credibility, required for some retailers</td><td>Free–$500</td><td>2–4 months</td></tr>
+          <tr><td>EWG Verified</td><td>US health-conscious consumers, Whole Foods</td><td>$2,000–8,000/yr</td><td>3–6 months</td></tr>
+          <tr><td>B Corp</td><td>Brand authority, PR value, investor interest</td><td>$1,000–50,000/yr</td><td>6–18 months</td></tr>
+          <tr><td>NSF / USP (toothpaste)</td><td>Required for OTC toothpaste claims in US</td><td>$5,000–20,000</td><td>6–12 months</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <hr class="divider">
+
+    <!-- ══════════════════════════════
+         PHASE 2: BRAND
+    ══════════════════════════════ -->
+    <div class="section" id="phase2">
+      <div class="section-badge badge-purple">Phase 02</div>
+      <h2 class="section-title">Brand Identity</h2>
+      <div class="section-desc">Your brand is your moat in a commoditized category. The sustainability story must feel authentic, not performed.</div>
+
+      <h3 style="font-size:14px;font-weight:600;margin:20px 0 8px;color:var(--ink)">Naming & Positioning</h3>
+      <ul class="checklist">
+        <li class="check-item"><input type="checkbox"><label>Run naming workshop — generate 50+ names across different territory types</label><span class="check-tag tag-now">NOW</span></li>
+        <li class="check-item"><input type="checkbox"><label>Check trademark availability for top 10 names (USPTO TESS + EU EUIPO)</label><span class="check-tag tag-q3">Q3 '26</span></li>
+        <li class="check-item"><input type="checkbox"><label>Check domain availability (.com priority) for top 5 names</label><span class="check-tag tag-q3">Q3 '26</span></li>
+        <li class="check-item"><input type="checkbox"><label>Write your brand positioning statement (1 sentence)</label><span class="check-tag tag-q3">Q3 '26</span></li>
+        <li class="check-item"><input type="checkbox"><label>Define your brand voice: 3 adjectives, 3 anti-adjectives</label><span class="check-tag tag-q3">Q3 '26</span></li>
+        <li class="check-item"><input type="checkbox"><label>Write your sustainability story — must be specific and verifiable</label><span class="check-tag tag-q3">Q3 '26</span></li>
+      </ul>
+
+      <h3 style="font-size:14px;font-weight:600;margin:20px 0 8px;color:var(--ink)">Visual Identity</h3>
+      <ul class="checklist">
+        <li class="check-item"><input type="checkbox"><label>Hire brand designer (or agency) — request proposals from 3 studios</label><span class="check-tag tag-q3">Q3 '26</span></li>
+        <li class="check-item"><input type="checkbox"><label>Create moodboard: color palette, typography, photography style</label><span class="check-tag tag-q3">Q3 '26</span></li>
+        <li class="check-item"><input type="checkbox"><label>Finalize logo (primary, secondary, mark only) + brand colors</label><span class="check-tag tag-q4">Q4 '26</span></li>
+        <li class="check-item"><input type="checkbox"><label>Build complete brand guidelines document</label><span class="check-tag tag-q4">Q4 '26</span></li>
+        <li class="check-item"><input type="checkbox"><label>Design packaging for all launch SKUs (dieline → print-ready files)</label><span class="check-tag tag-q4">Q4 '26</span></li>
+        <li class="check-item"><input type="checkbox"><label>Commission product photography (lifestyle + white-background e-com shots)</label><span class="check-tag tag-q4">Q4 '26</span></li>
+        <li class="check-item"><input type="checkbox"><label>Create unboxing / customer experience design (tissue paper, insert card, etc.)</label><span class="check-tag tag-q4">Q4 '26</span></li>
+      </ul>
+
+      <div class="card-grid">
+        <div class="card">
+          <div class="card-title">🌿 Naming territories to explore</div>
+          <p>Scientific/elemental, minimalist one-word, verb-based action names, nature-rooted, suffix plays (–ly, –co, –ery). Avoid generic eco-words: "green," "pure," "clean."</p>
+        </div>
+        <div class="card">
+          <div class="card-title">📸 Photography priorities</div>
+          <p>The "dissolve moment" is your hero shot. Film a tablet dropping into water in slow motion — this becomes your homepage, your TikTok, your ad creative. Plan this shoot carefully.</p>
+        </div>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- ══════════════════════════════
+         PHASE 3: LEGAL
+    ══════════════════════════════ -->
+    <div class="section" id="phase3">
+      <div class="section-badge badge-amber">Phase 03</div>
+      <h2 class="section-title">Legal & Compliance</h2>
+      <div class="section-desc">Cosmetics are regulated differently in every market. Get legal review early — before you print packaging.</div>
+
+      <div class="callout amber">
+        <span class="callout-icon">⚠️</span>
+        <div class="callout-body">
+          <strong>MoCRA (2023)</strong> — The Modernization of Cosmetics Regulation Act now requires US cosmetic brands to register facilities and list products with the FDA. This is new as of 2023. Toothpaste with fluoride is classified as an OTC drug — different rules apply.
+        </div>
+      </div>
+
+      <ul class="checklist">
+        <li class="check-item"><input type="checkbox"><label>Form LLC and obtain EIN (IRS)</label><span class="check-tag tag-now">NOW</span></li>
+        <li class="check-item"><input type="checkbox"><label>Open business bank account and business credit card</label><span class="check-tag tag-now">NOW</span></li>
+        <li class="check-item"><input type="checkbox"><label>Hire a cosmetic regulatory attorney for a one-time label review</label><span class="check-tag tag-q3">Q3 '26</span></li>
+        <li class="check-item"><input type="checkbox"><label>File trademark application (USPTO): brand name + logo</label><span class="check-tag tag-q3">Q3 '26</span></li>
+        <li class="check-item"><input type="checkbox"><label>Commission Product Safety Assessment (PSA) for each SKU</label><span class="check-tag tag-q3">Q3 '26</span></li>
+        <li class="check-item"><input type="checkbox"><label>Register with FDA Cosmetics Direct system (MoCRA requirement)</label><span class="check-tag tag-q4">Q4 '26</span></li>
+        <li class="check-item"><input type="checkbox"><label>Ensure INCI ingredient naming on all labels (required US + EU)</label><span class="check-tag tag-q4">Q4 '26</span></li>
+        <li class="check-item"><input type="checkbox"><label>Review eco-claims for FTC Green Guides compliance (no vague "eco-friendly" claims)</label><span class="check-tag tag-q4">Q4 '26</span></li>
+        <li class="check-item"><input type="checkbox"><label>Set up product liability insurance ($1M+ general liability minimum)</label><span class="check-tag tag-q4">Q4 '26</span></li>
+        <li class="check-item"><input type="checkbox"><label>Draft Terms of Service, Privacy Policy, and Returns Policy for website</label><span class="check-tag tag-q4">Q4 '26</span></li>
+        <li class="check-item"><input type="checkbox"><label>If selling in EU: appoint a Responsible Person + register with CPNP portal</label><span class="check-tag tag-launch">Pre-launch</span></li>
+      </ul>
+    </div>
+
+    <hr class="divider">
+
+    <!-- ══════════════════════════════
+         PHASE 4: STORE & TECH
+    ══════════════════════════════ -->
+    <div class="section" id="phase4">
+      <div class="section-badge badge-blue">Phase 04</div>
+      <h2 class="section-title">Store & Tech Stack</h2>
+      <div class="section-desc">Build for subscriptions from day one. Dissolvables are a replenishment product — your LTV depends on it.</div>
+
+      <h3 style="font-size:14px;font-weight:600;margin:20px 0 8px;color:var(--ink)">E-commerce Platform</h3>
+      <ul class="checklist">
+        <li class="check-item"><input type="checkbox"><label>Purchase domain name and set up email (Google Workspace)</label><span class="check-tag tag-q3">Q3 '26</span></li>
+        <li class="check-item"><input type="checkbox"><label>Set up Shopify store (Shopify Basic or Shopify plan)</label><span class="check-tag tag-q4">Q4 '26</span></li>
+        <li class="check-item"><input type="checkbox"><label>Install and configure subscription app: Recharge, Skio, or Loop</label><span class="check-tag tag-q4">Q4 '26</span></li>
+        <li class="check-item"><input type="checkbox"><label>Build homepage, product pages, about/sustainability page, FAQ</label><span class="check-tag tag-q4">Q4 '26</span></li>
+        <li class="check-item"><input type="checkbox"><label>Set up payment: Shopify Payments + PayPal + Shop Pay</label><span class="check-tag tag-q4">Q4 '26</span></li>
+        <li class="check-item"><input type="checkbox"><label>Configure shipping zones and rates (offer free shipping threshold)</label><span class="check-tag tag-q4">Q4 '26</span></li>
+        <li class="check-item"><input type="checkbox"><label>Set up returns portal (Loop Returns or native)</label><span class="check-tag tag-q4">Q4 '26</span></li>
+        <li class="check-item"><input type="checkbox"><label>Mobile QA test all pages — 70%+ of traffic will be mobile</label><span class="check-tag tag-launch">Pre-launch</span></li>
+      </ul>
+
+      <h3 style="font-size:14px;font-weight:600;margin:20px 0 8px;color:var(--ink)">Recommended Tech Stack</h3>
+      <table class="data-table">
+        <thead><tr><th>Function</th><th>Tool</th><th>Monthly cost</th></tr></thead>
+        <tbody>
+          <tr><td>E-commerce</td><td>Shopify</td><td>$79–299</td></tr>
+          <tr><td>Email / SMS marketing</td><td>Klaviyo</td><td>$0–150 (scales)</td></tr>
+          <tr><td>Subscriptions</td><td>Recharge or Skio</td><td>$99–299</td></tr>
+          <tr><td>Customer support</td><td>Gorgias</td><td>$10–60</td></tr>
+          <tr><td>Reviews</td><td>Okendo or Judge.me</td><td>$9–119</td></tr>
+          <tr><td>Analytics</td><td>Triple Whale</td><td>$129–249</td></tr>
+          <tr><td>SEO content</td><td>Surfer SEO</td><td>$89–219</td></tr>
+          <tr><td>Loyalty / referral</td><td>Smile.io or Refersion</td><td>$49–299</td></tr>
+          <tr><td>Live chat</td><td>Tidio</td><td>$0–49</td></tr>
+          <tr><td>Inventory planning</td><td>Inventory Planner</td><td>$99–299</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <hr class="divider">
+
+    <!-- ══════════════════════════════
+         PHASE 5: MARKETING
+    ══════════════════════════════ -->
+    <div class="section" id="phase5">
+      <div class="section-badge badge-coral">Phase 05</div>
+      <h2 class="section-title">Marketing & Content</h2>
+      <div class="section-desc">Your unfair advantage: the "dissolve moment" is one of the most shareable product demos in beauty. Build your content strategy around it.</div>
+
+      <div class="highlight-block">
+        <strong>Content priority:</strong> The tablet-dropping-into-water slow-motion video is your top-of-funnel hook. It demonstrates value instantly, is inherently satisfying to watch, and communicates zero waste without a word of copy. Invest in making this perfect.
+      </div>
+
+      <h3 style="font-size:14px;font-weight:600;margin:20px 0 8px;color:var(--ink)">Pre-Launch (Oct '26 – Feb '27)</h3>
+      <ul class="checklist">
+        <li class="check-item"><input type="checkbox"><label>Launch pre-waitlist landing page with email capture</label><span class="check-tag tag-q4">Q4 '26</span></li>
+        <li class="check-item"><input type="checkbox"><label>Set up and start growing TikTok + Instagram accounts</label><span class="check-tag tag-q4">Q4 '26</span></li>
+        <li class="check-item"><input type="checkbox"><label>Build email list to 1,000+ subscribers before launch</label><span class="check-tag tag-q4">Q4 '26</span></li>
+        <li class="check-item"><input type="checkbox"><label>Identify and DM 20 micro-influencers in sustainable beauty (50k–300k)</label><span class="check-tag tag-q4">Q4 '26</span></li>
+        <li class="check-item"><input type="checkbox"><label>Film "dissolve demo" hero video — slow-mo, multiple products</label><span class="check-tag tag-launch">Jan '27</span></li>
+        <li class="check-item"><input type="checkbox"><label>Write 10 SEO-optimized blog posts (publish 5 at launch, 5 in month 2)</label><span class="check-tag tag-launch">Jan '27</span></li>
+        <li class="check-item"><input type="checkbox"><label>Build paid ad creative library: 5+ video, 3+ static, 2+ carousel</label><span class="check-tag tag-launch">Feb '27</span></li>
+        <li class="check-item"><input type="checkbox"><label>Seed product to influencers with embargo date (launch week)</label><span class="check-tag tag-launch">Feb '27</span></li>
+      </ul>
+
+      <h3 style="font-size:14px;font-weight:600;margin:20px 0 8px;color:var(--ink)">Email Flows to Build</h3>
+      <table class="data-table">
+        <thead><tr><th>Flow</th><th>Trigger</th><th>Emails</th></tr></thead>
+        <tbody>
+          <tr><td>Welcome series</td><td>Signup / first purchase</td><td>3 emails over 7 days</td></tr>
+          <tr><td>Abandoned cart</td><td>Add to cart, no purchase after 1hr</td><td>3 emails: 1hr / 24hr / 72hr</td></tr>
+          <tr><td>Post-purchase</td><td>Order confirmed</td><td>4 emails: confirm, ship, how-to-use, review ask</td></tr>
+          <tr><td>Win-back</td><td>No purchase in 90 days</td><td>2 emails with discount</td></tr>
+          <tr><td>Subscription renewal</td><td>7 days before next charge</td><td>1 reminder + 1 loyalty reward</td></tr>
+          <tr><td>Waitlist launch</td><td>Launch day (March 2027)</td><td>1 launch email + 24hr urgency follow-up</td></tr>
+        </tbody>
+      </table>
+
+      <h3 style="font-size:14px;font-weight:600;margin:20px 0 8px;color:var(--ink)">SEO Priority Keywords</h3>
+      <ul class="checklist">
+        <li class="check-item"><input type="checkbox"><label>Dissolvable shampoo / shampoo tablet / solid shampoo bar</label></li>
+        <li class="check-item"><input type="checkbox"><label>Plastic-free personal care / zero waste bathroom</label></li>
+        <li class="check-item"><input type="checkbox"><label>Dissolvable hand soap / concentrated hand soap refill</label></li>
+        <li class="check-item"><input type="checkbox"><label>Toothpaste tablets / fluoride toothpaste tablet</label></li>
+        <li class="check-item"><input type="checkbox"><label>Eco-friendly body wash / sustainable shower routine</label></li>
+        <li class="check-item"><input type="checkbox"><label>Stain remover pods / dissolvable laundry sheets</label></li>
+      </ul>
+    </div>
+
+    <hr class="divider">
+
+    <!-- ══════════════════════════════
+         PHASE 6: OPERATIONS
+    ══════════════════════════════ -->
+    <div class="section" id="phase6">
+      <div class="section-badge badge-green">Phase 06</div>
+      <h2 class="section-title">Operations & Fulfillment</h2>
+      <div class="section-desc">Fulfillment is the hidden variable that kills early brands. Lock in your 3PL before inventory arrives.</div>
+
+      <h3 style="font-size:14px;font-weight:600;margin:20px 0 8px;color:var(--ink)">Fulfillment Setup</h3>
+      <ul class="checklist">
+        <li class="check-item"><input type="checkbox"><label>Decide: self-fulfill from home vs. 3PL warehouse (recommend 3PL at 50+ orders/day)</label><span class="check-tag tag-q3">Q3 '26</span></li>
+        <li class="check-item"><input type="checkbox"><label>Interview 3 third-party logistics (3PL) providers — get rate cards</label><span class="check-tag tag-q3">Q3 '26</span></li>
+        <li class="check-item"><input type="checkbox"><label>Sign 3PL agreement and integrate with Shopify</label><span class="check-tag tag-q4">Q4 '26</span></li>
+        <li class="check-item"><input type="checkbox"><label>Set up inventory management system (Inventory Planner or Cin7)</label><span class="check-tag tag-q4">Q4 '26</span></li>
+        <li class="check-item"><input type="checkbox"><label>Define reorder points for each SKU (avoid stockouts on launch)</label><span class="check-tag tag-launch">Pre-launch</span></li>
+        <li class="check-item"><input type="checkbox"><label>Plan packaging materials: boxes, inserts, tissue paper — all plastic-free</label><span class="check-tag tag-q4">Q4 '26</span></li>
+        <li class="check-item"><input type="checkbox"><label>Do a full test order end-to-end before going live</label><span class="check-tag tag-launch">Pre-launch</span></li>
+      </ul>
+
+      <h3 style="font-size:14px;font-weight:600;margin:20px 0 8px;color:var(--ink)">Customer Experience Standards</h3>
+      <table class="data-table">
+        <thead><tr><th>Metric</th><th>Target</th><th>Tool to track</th></tr></thead>
+        <tbody>
+          <tr><td>Order processing time</td><td>Same day / next business day</td><td>Shopify / 3PL dashboard</td></tr>
+          <tr><td>Shipping transit time</td><td>3–5 business days (US)</td><td>AfterShip</td></tr>
+          <tr><td>Customer support first reply</td><td>&lt; 4 hours (business hours)</td><td>Gorgias</td></tr>
+          <tr><td>Return rate</td><td>&lt; 8%</td><td>Loop Returns</td></tr>
+          <tr><td>Customer satisfaction (CSAT)</td><td>&gt; 4.5 / 5.0</td><td>Gorgias / post-support survey</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <hr class="divider">
+
+    <!-- ══════════════════════════════
+         BUDGET
+    ══════════════════════════════ -->
+    <div class="section" id="budget">
+      <div class="section-badge badge-gray">💰 Finance</div>
+      <h2 class="section-title">Launch Budget Tracker</h2>
+      <div class="section-desc">Realistic pre-launch spend for a lean but credible launch. Adjust based on your market and ambition.</div>
+
+      <div class="callout blue">
+        <span class="callout-icon">📌</span>
+        <div class="callout-body">
+          This is a lean DTC launch budget. Figures are indicative — get quotes for your specific situation. The biggest variable is <strong>initial production run quantity</strong> — MOQs range from 500 to 10,000 units depending on your CM.
+        </div>
+      </div>
+
+      <table class="data-table">
+        <thead><tr><th>Category</th><th>Item</th><th>Estimated cost</th><th>Timing</th></tr></thead>
+        <tbody>
+          <tr><td>Legal</td><td>LLC formation + trademark (2 classes)</td><td>$1,500–3,000</td><td>May–Jul '26</td></tr>
+          <tr><td>Legal</td><td>Regulatory attorney review (labels + claims)</td><td>$2,000–5,000</td><td>Q3 '26</td></tr>
+          <tr><td>Legal</td><td>Product liability insurance (annual)</td><td>$800–2,500</td><td>Q4 '26</td></tr>
+          <tr><td>Product</td><td>R&D + formulation samples (CM)</td><td>$3,000–10,000</td><td>Q3 '26</td></tr>
+          <tr><td>Product</td><td>Safety testing + stability studies</td><td>$2,000–6,000</td><td>Q3–Q4 '26</td></tr>
+          <tr><td>Product</td><td>First production run (3–5 SKUs)</td><td>$15,000–50,000</td><td>Q4 '26</td></tr>
+          <tr><td>Brand</td><td>Brand identity design (naming, logo, guidelines)</td><td>$3,000–15,000</td><td>Q3 '26</td></tr>
+          <tr><td>Brand</td><td>Packaging design + print setup fees</td><td>$2,000–8,000</td><td>Q4 '26</td></tr>
+          <tr><td>Brand</td><td>Product photography (lifestyle + e-com)</td><td>$2,000–6,000</td><td>Q4 '26</td></tr>
+          <tr><td>Tech</td><td>Shopify + apps (annual)</td><td>$2,000–5,000</td><td>Q4 '26</td></tr>
+          <tr><td>Tech</td><td>Website design/development</td><td>$3,000–12,000</td><td>Q4 '26</td></tr>
+          <tr><td>Marketing</td><td>Influencer seeding (product + gifting)</td><td>$2,000–5,000</td><td>Jan '27</td></tr>
+          <tr><td>Marketing</td><td>Paid social launch budget (first 3 months)</td><td>$5,000–20,000</td><td>Mar '27+</td></tr>
+          <tr><td>Ops</td><td>3PL setup + first month fulfillment</td><td>$1,000–3,000</td><td>Jan '27</td></tr>
+          <tr><td>Ops</td><td>Shipping materials (boxes, inserts, tape)</td><td>$500–2,000</td><td>Jan '27</td></tr>
+          <tr><td>Buffer</td><td>10% contingency</td><td>~$5,000–15,000</td><td>Ongoing</td></tr>
+          <tr class="budget-row-total"><td colspan="2"><strong>Total estimated pre-launch investment</strong></td><td><strong>$50,000–168,000</strong></td><td></td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout green" style="margin-top:16px">
+        <span class="callout-icon">💡</span>
+        <div class="callout-body">
+          <strong>Lean path:</strong> $50–80k is achievable if you self-fulfill at launch, use a brand designer (not agency), and keep initial production run modest (1,000–2,000 units per SKU). Focus spend on formulation, safety testing, and photography — these have the highest ROI.
+        </div>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- ══════════════════════════════
+         KPIs
+    ══════════════════════════════ -->
+    <div class="section" id="kpis">
+      <div class="section-badge badge-gray">📊 KPIs</div>
+      <h2 class="section-title">Launch Success Metrics</h2>
+      <div class="section-desc">Track these from Day 1. Set 30/60/90-day targets.</div>
+
+      <table class="data-table">
+        <thead><tr><th>KPI</th><th>Day 30 target</th><th>Day 90 target</th><th>Tool</th></tr></thead>
+        <tbody>
+          <tr><td>Revenue</td><td>$5,000–15,000</td><td>$25,000–60,000</td><td>Shopify</td></tr>
+          <tr><td>Orders</td><td>50–150</td><td>250–600</td><td>Shopify</td></tr>
+          <tr><td>AOV (Average Order Value)</td><td>$35–55</td><td>$40–65</td><td>Shopify / Triple Whale</td></tr>
+          <tr><td>Customer Acquisition Cost (CAC)</td><td>&lt;$45</td><td>&lt;$35</td><td>Triple Whale</td></tr>
+          <tr><td>ROAS (Return on ad spend)</td><td>1.5–2.5x</td><td>2.5–4x</td><td>Meta / TikTok Ads Manager</td></tr>
+          <tr><td>Email list size</td><td>1,500+</td><td>5,000+</td><td>Klaviyo</td></tr>
+          <tr><td>Email open rate</td><td>&gt;40%</td><td>&gt;35%</td><td>Klaviyo</td></tr>
+          <tr><td>Subscription rate</td><td>&gt;20% of orders</td><td>&gt;30% of orders</td><td>Recharge / Skio</td></tr>
+          <tr><td>Repeat purchase rate</td><td>n/a</td><td>&gt;15%</td><td>Shopify / Triple Whale</td></tr>
+          <tr><td>Product rating</td><td>&gt;4.3 stars</td><td>&gt;4.5 stars</td><td>Okendo / Judge.me</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout purple" style="margin-top:16px">
+        <span class="callout-icon">🎯</span>
+        <div class="callout-body">
+          <strong>The metric that matters most:</strong> Subscription rate. If you can get 25%+ of customers on subscribe-and-save from day one, your LTV math works even with a high CAC. Dissolvables are a perfect subscription product — build around this from the start.
+        </div>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+
+    <hr class="divider">
+
+    <!-- ══════════════════════════════
+         MARKETING — CONTENT CALENDAR
+    ══════════════════════════════ -->
+    <div class="section" id="mkt-calendar">
+      <div class="section-badge badge-purple">📅 Marketing</div>
+      <h2 class="section-title">Content Calendar</h2>
+      <div class="section-desc">Plan and track every post, email, blog, and paid campaign in one place.</div>
+
+      <div class="cal-legend">
+        <span class="cal-legend-item"><span class="cal-legend-dot" style="background:var(--purple)"></span> Social</span>
+        <span class="cal-legend-item"><span class="cal-legend-dot" style="background:var(--blue)"></span> Email</span>
+        <span class="cal-legend-item"><span class="cal-legend-dot" style="background:var(--accent)"></span> Blog</span>
+        <span class="cal-legend-item"><span class="cal-legend-dot" style="background:var(--amber)"></span> Paid Ad</span>
+        <span class="cal-legend-item"><span class="cal-legend-dot" style="background:var(--coral)"></span> Launch</span>
+      </div>
+
+      <div class="cal-nav">
+        <button onclick="calPrev()">← Prev</button>
+        <span class="cal-month-label" id="cal-label"></span>
+        <button onclick="calNext()">Next →</button>
+      </div>
+
+      <div class="cal-grid" id="cal-headers">
+        <div class="cal-day-header">Sun</div>
+        <div class="cal-day-header">Mon</div>
+        <div class="cal-day-header">Tue</div>
+        <div class="cal-day-header">Wed</div>
+        <div class="cal-day-header">Thu</div>
+        <div class="cal-day-header">Fri</div>
+        <div class="cal-day-header">Sat</div>
+      </div>
+      <div class="cal-grid" id="cal-grid"></div>
+
+      <button class="add-row-btn" onclick="openEventModal()" style="margin-top:10px">+ Add content event</button>
+    </div>
+
+    <!-- ── EVENT MODAL ── -->
+    <div class="modal-backdrop hidden" id="event-modal-backdrop">
+      <div class="modal-box">
+        <h3>📝 Content Event</h3>
+        <div class="modal-field">
+          <label>Title</label>
+          <input type="text" id="ev-title" placeholder="e.g. Launch week Instagram Reel">
+        </div>
+        <div class="modal-row">
+          <div class="modal-field">
+            <label>Date</label>
+            <input type="date" id="ev-date">
+          </div>
+          <div class="modal-field">
+            <label>Type</label>
+            <select id="ev-type">
+              <option value="social">📱 Social</option>
+              <option value="email">📧 Email</option>
+              <option value="blog">✍️ Blog</option>
+              <option value="paid">💰 Paid Ad</option>
+              <option value="launch">🚀 Launch</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-field">
+          <label>Notes / Caption / Brief</label>
+          <textarea id="ev-notes" placeholder="Caption idea, target audience, goal…"></textarea>
+        </div>
+        <div class="modal-field">
+          <label>Status</label>
+          <select id="ev-status">
+            <option value="planned">🗓 Planned</option>
+            <option value="draft">✏️ Draft</option>
+            <option value="scheduled">⏰ Scheduled</option>
+            <option value="published">✅ Published</option>
+          </select>
+        </div>
+        <div class="modal-actions">
+          <button class="btn-sm danger" id="ev-delete-btn" onclick="deleteEvent()" style="display:none;margin-right:auto">🗑 Delete</button>
+          <button class="btn-sm" onclick="closeEventModal()">Cancel</button>
+          <button class="btn-sm primary" onclick="saveEvent()">Save event</button>
+        </div>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- ══════════════════════════════
+         MARKETING — EMAIL FLOWS
+    ══════════════════════════════ -->
+    <div class="section" id="mkt-email">
+      <div class="section-badge badge-blue">📧 Email</div>
+      <h2 class="section-title">Email Flows</h2>
+      <div class="section-desc">Build and track every automated email sequence. Click a flow to expand and edit individual emails.</div>
+
+      <div class="email-flow-grid" id="email-flows-list"></div>
+      <button class="add-row-btn" onclick="addEmailFlow()">+ Add email flow</button>
+    </div>
+
+    <hr class="divider">
+
+    <!-- ══════════════════════════════
+         LINKS & RESOURCES
+    ══════════════════════════════ -->
+    <div class="section" id="links">
+      <div class="section-badge badge-coral">🔗 Resources</div>
+      <h2 class="section-title">Links & SOPs</h2>
+      <div class="section-desc">All your important links in one place — SOPs, AI tools, domain credentials, supplier portals, anything.</div>
+
+      <div id="links-list" class="links-grid"></div>
+      <button class="add-row-btn" onclick="openLinkModal()">+ Add link</button>
+    </div>
+
+    <!-- ── LINK MODAL ── -->
+    <div class="modal-backdrop hidden" id="link-modal-backdrop">
+      <div class="modal-box">
+        <h3>🔗 Add Link</h3>
+        <div class="modal-field">
+          <label>Title</label>
+          <input type="text" id="lnk-title" placeholder="e.g. Brand Guidelines SOP">
+        </div>
+        <div class="modal-field">
+          <label>URL</label>
+          <input type="url" id="lnk-url" placeholder="https://…">
+        </div>
+        <div class="modal-row">
+          <div class="modal-field">
+            <label>Category</label>
+            <select id="lnk-cat">
+              <option value="sop">📋 SOP</option>
+              <option value="ai">🤖 AI Tool</option>
+              <option value="domain">🌐 Domain / DNS</option>
+              <option value="credentials">🔑 Credentials</option>
+              <option value="supplier">🏭 Supplier</option>
+              <option value="design">🎨 Design</option>
+              <option value="analytics">📊 Analytics</option>
+              <option value="legal">⚖️ Legal</option>
+              <option value="other">📎 Other</option>
+            </select>
+          </div>
+          <div class="modal-field">
+            <label>Icon (emoji)</label>
+            <input type="text" id="lnk-icon" placeholder="🔗" maxlength="4" style="font-size:18px;text-align:center">
+          </div>
+        </div>
+        <div class="modal-field">
+          <label>Notes</label>
+          <textarea id="lnk-notes" placeholder="Login info, context, what this is for…" rows="2"></textarea>
+        </div>
+        <div class="modal-actions">
+          <button class="btn-sm danger" id="lnk-delete-btn" onclick="deleteLink()" style="display:none;margin-right:auto">🗑 Delete</button>
+          <button class="btn-sm" onclick="closeLinkModal()">Cancel</button>
+          <button class="btn-sm primary" onclick="saveLink()">Save link</button>
+        </div>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- ══════════════════════════════
+         PRODUCT CATALOG
+    ══════════════════════════════ -->
+    <div class="section" id="products">
+      <div class="section-badge badge-green">📦 Products</div>
+      <h2 class="section-title">Product Catalog</h2>
+      <div class="section-desc">Every SKU in one place — pricing, costs, MOQ, manufacturer, and restocking info.</div>
+
+      <div class="callout green">
+        <span class="callout-icon">💡</span>
+        <div class="callout-body">Click <strong>+ Add product</strong> to add a new SKU. All fields are editable inline. The <strong>Stock Status</strong> column updates automatically based on your restock date.</div>
+      </div>
+
+      <div class="product-table-wrap">
+        <table class="product-table" id="product-table">
+          <thead>
+            <tr>
+              <th>SKU</th>
+              <th>Product Name</th>
+              <th>Format</th>
+              <th>Retail Price</th>
+              <th>COGS</th>
+              <th>Margin</th>
+              <th>MOQ</th>
+              <th>Manufacturer</th>
+              <th>Units in Stock</th>
+              <th>Restock Date</th>
+              <th>Status</th>
+              <th>Notes</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="product-tbody"></tbody>
+        </table>
+        <button class="add-product-btn" onclick="addProduct()">+ Add product / SKU</button>
+      </div>
+    </div>
+
+
+    <!-- FOOTER -->
+    <div style="text-align:center; padding: 24px 0; color: var(--ink3); font-size:12px; font-family:var(--mono);">
+      Brand Launch Playbook · Dissolvable Personal Care · March 2027<br>
+      Generated May 2026 · 87 tasks · 6 phases
+    </div>
+
+  </div>
+</main>
+
+<div id="save-toast">✓ Saved</div>
+
+<script type="module">
+/* ═══════════════════════════════════════════
+   CONFIG — filled in after setup
+═══════════════════════════════════════════ */
+const CREDS_KEY = 'playbook_supabase_creds';
+const STORE_KEY  = 'dissolve_playbook_v1';
+const DOC_ID     = 'dissolve-brand-playbook';
+
+let sbClient = null; // kept for compat but unused
+let sbUrl = '', sbKey = '';
+let useSupabase = false;
+let saveDebounce = null;
+
+/* ═══════════════════════════════════════════
+   SETUP / CONNECT
+═══════════════════════════════════════════ */
+function loadCreds() {
+  try { return JSON.parse(localStorage.getItem(CREDS_KEY)) || null; } catch { return null; }
+}
+function saveCreds(url, key) {
+  localStorage.setItem(CREDS_KEY, JSON.stringify({ url, key }));
+}
+
+/* ── Pure REST helpers — no supabase-js client, avoids postMessage/Headers cloning bug ── */
+function sbHeaders() {
+  return {
+    'apikey': sbKey,
+    'Authorization': 'Bearer ' + sbKey,
+    'Content-Type': 'application/json',
+    'Prefer': 'return=minimal'
+  };
+}
+
+async function sbFetch(path, options = {}) {
+  const res = await fetch(sbUrl + '/rest/v1' + path, {
+    ...options,
+    headers: { ...sbHeaders(), ...(options.headers || {}) }
+  });
+  if (!res.ok) {
+    const body = await res.text();
+    let parsed;
+    try { parsed = JSON.parse(body); } catch { parsed = { message: body }; }
+    throw parsed;
+  }
+  const text = await res.text();
+  return text ? JSON.parse(text) : null;
+}
+
+async function connectSupabase() {
+  const url = document.getElementById('inp-url').value.trim().replace(/\/$/, '');
+  const key = document.getElementById('inp-key').value.trim();
+  const errEl = document.getElementById('setup-error');
+  const btn = document.getElementById('btn-connect');
+
+  if (!url || !key) { errEl.textContent = 'Please fill in both fields.'; errEl.classList.add('visible'); return; }
+  if (key.length < 20) { errEl.textContent = 'Key looks too short — paste the full anon/publishable key'; errEl.classList.add('visible'); return; }
+
+  btn.disabled = true;
+  btn.textContent = 'Connecting…';
+  errEl.classList.remove('visible');
+
+  // Store temporarily so sbFetch can use them
+  sbUrl = url; sbKey = key;
+
+  try {
+    // Lightweight test — just hit the table endpoint
+    await sbFetch('/playbook?select=id&limit=1');
+    useSupabase = true;
+    saveCreds(url, key);
+    document.getElementById('setup-overlay').classList.add('hidden');
+    setDbStatus('connecting');
+    await loadFromSupabase();
+    showToast('✓ Connected to Supabase');
+  } catch(e) {
+    sbUrl = ''; sbKey = '';
+    const msg = e.message || e.hint || JSON.stringify(e);
+    errEl.textContent = 'Could not connect: ' + msg;
+    errEl.classList.add('visible');
+    btn.disabled = false;
+    btn.textContent = 'Connect & save credentials';
+  }
+}
+
+function skipSetup() {
+  localStorage.setItem(CREDS_KEY, 'skip');
+  document.getElementById('setup-overlay').classList.add('hidden');
+  setDbStatus('offline');
+  loadLocal();
+}
+
+async function initSupabase() {
+  const creds = loadCreds();
+  if (!creds) { /* overlay stays visible */ return; }
+  if (creds === 'skip') {
+    document.getElementById('setup-overlay').classList.add('hidden');
+    setDbStatus('offline');
+    loadLocal();
+    return;
+  }
+  // Auto-reconnect with saved creds — pure REST, no client lib needed
+  sbUrl = creds.url.replace(/\/$/, '');
+  sbKey = creds.key;
+  useSupabase = true;
+  document.getElementById('setup-overlay').classList.add('hidden');
+  setDbStatus('connecting');
+  await loadFromSupabase();
+}
+
+/* ═══════════════════════════════════════════
+   DB STATUS
+═══════════════════════════════════════════ */
+function setDbStatus(state) {
+  const pill = document.getElementById('db-pill');
+  if (!pill) return;
+  pill.className = 'db-pill ' + state;
+  const labels = { connected: 'Supabase ●', offline: 'Local only', error: 'DB error', connecting: 'Connecting…' };
+  pill.innerHTML = '<span class="db-dot"></span>' + (labels[state] || state);
+}
+
+/* ═══════════════════════════════════════════
+   ASSIGN STABLE IDs
+═══════════════════════════════════════════ */
+function assignIds() {
+  const sel = [
+    '.page-title', '.page-subtitle',
+    '.section-title', '.section-desc', '.section-badge',
+    '.callout-body', '.highlight-block',
+    '.tl-month', '.tl-title', '.tl-tasks li',
+    '.card-title', '.card p',
+    'td', 'th', 'label',
+    '.kpi-value', '.kpi-label',
+    '.sidebar-logo .brand', '.sidebar-logo .sub',
+    'h3[style]', '.check-tag',
+  ].join(',');
+  let idx = 0;
+  document.querySelectorAll(sel).forEach(el => {
+    if (!el.dataset.eid) el.dataset.eid = 'e' + (idx++);
+  });
+  document.querySelectorAll('.check-item input[type="checkbox"]').forEach((cb, i) => {
+    if (!cb.dataset.cbid) cb.dataset.cbid = 'cb' + i;
+  });
+}
+
+/* ═══════════════════════════════════════════
+   COLLECT STATE
+═══════════════════════════════════════════ */
+function collectState() {
+  const texts = {}, checks = {};
+  document.querySelectorAll('[data-eid]').forEach(el => { texts[el.dataset.eid] = el.innerHTML; });
+  document.querySelectorAll('[data-cbid]').forEach(cb => { checks[cb.dataset.cbid] = cb.checked; });
+  return { texts, checks, calEvents, emailFlows, links, products, ts: Date.now() };
+}
+
+/* ═══════════════════════════════════════════
+   APPLY STATE
+═══════════════════════════════════════════ */
+function applyState(data) {
+  if (data.texts) {
+    Object.entries(data.texts).forEach(([eid, html]) => {
+      const el = document.querySelector('[data-eid="' + eid + '"]');
+      if (el) el.innerHTML = html;
+    });
+  }
+  if (data.checks) {
+    Object.entries(data.checks).forEach(([cbid, checked]) => {
+      const cb = document.querySelector('[data-cbid="' + cbid + '"]');
+      if (cb) { cb.checked = checked; cb.closest('.check-item').classList.toggle('done', checked); }
+    });
+  }
+  if (data.calEvents)   { calEvents   = data.calEvents;   renderCal(); }
+  if (data.emailFlows)  { emailFlows  = data.emailFlows;  renderEmailFlows(); }
+  if (data.links)       { links       = data.links;        renderLinks(); }
+  if (data.products)    { products    = data.products;     renderProducts(); }
+  updateProgress();
+}
+
+/* ═══════════════════════════════════════════
+   LOAD
+═══════════════════════════════════════════ */
+async function loadFromSupabase() {
+  try {
+    const rows = await sbFetch('/playbook?select=data&id=eq.' + encodeURIComponent(DOC_ID) + '&limit=1');
+    if (rows && rows.length > 0) {
+      applyState(rows[0].data);
+      localStorage.setItem(STORE_KEY, JSON.stringify(rows[0].data));
+    } else {
+      loadLocal(); // first time, no data yet
+    }
+    setDbStatus('connected');
+  } catch(e) {
+    console.warn('Supabase load failed, falling back to local', JSON.stringify(e));
+    setDbStatus('error');
+    showToast('⚠ DB error — check table exists & RLS policies');
+    loadLocal();
+  }
+}
+
+function loadLocal() {
+  const raw = localStorage.getItem(STORE_KEY);
+  if (raw) { try { applyState(JSON.parse(raw)); } catch(e) {} }
+}
+
+/* ═══════════════════════════════════════════
+   SAVE
+═══════════════════════════════════════════ */
+async function saveAll() {
+  const state = collectState();
+  setSyncStatus('saving', 'Saving…');
+
+  // Always save locally as fallback
+  localStorage.setItem(STORE_KEY, JSON.stringify(state));
+
+  if (useSupabase) {
+    try {
+      await sbFetch('/playbook', {
+        method: 'POST',
+        headers: { 'Prefer': 'resolution=merge-duplicates,return=minimal' },
+        body: JSON.stringify({ id: DOC_ID, data: state, updated_at: new Date().toISOString() })
+      });
+      setSyncStatus('saved', '✓ Synced');
+      showToast('✓ Saved to Supabase');
+    } catch(e) {
+      console.warn('Save failed', JSON.stringify(e));
+      setSyncStatus('error', '⚠ Sync failed');
+      showToast('⚠ Saved locally only');
+    }
+  } else {
+    setSyncStatus('', '');
+    showToast('✓ Saved locally');
+  }
+  updateProgress();
+}
+
+// Debounced autosave — fires 1.2s after last change
+function debouncedSave() {
+  clearTimeout(saveDebounce);
+  setSyncStatus('saving', 'Unsaved…');
+  saveDebounce = setTimeout(() => saveAll(), 1200);
+}
+
+function setSyncStatus(cls, text) {
+  const el = document.getElementById('sync-status');
+  if (!el) return;
+  el.className = cls;
+  el.textContent = text;
+}
+
+/* ═══════════════════════════════════════════
+   EDIT MODE
+═══════════════════════════════════════════ */
+let editMode = false;
+
+function toggleEdit() {
+  editMode = !editMode;
+  document.body.classList.toggle('edit-mode', editMode);
+  document.getElementById('btn-edit').textContent = editMode ? '✕ Done' : '✏️ Edit';
+  document.getElementById('btn-save').style.display = editMode ? 'inline-block' : 'none';
+  document.getElementById('btn-reset').style.display = editMode ? 'inline-block' : 'none';
+  document.getElementById('edit-indicator').classList.toggle('visible', editMode);
+
+  const editableSel = [
+    '.page-title', '.page-subtitle',
+    '.section-title', '.section-desc', '.section-badge',
+    '.callout-body', '.highlight-block',
+    '.tl-month', '.tl-title', '.tl-tasks li',
+    '.card-title', '.card p',
+    'td', 'th', 'label',
+    '.kpi-value', '.kpi-label',
+    '.sidebar-logo .brand', '.sidebar-logo .sub',
+    'h3[style]', '.check-tag',
+  ].join(',');
+
+  document.querySelectorAll(editableSel).forEach(el => {
+    el.contentEditable = editMode ? 'true' : 'false';
+    if (editMode) {
+      el.addEventListener('input', debouncedSave);
+      el.addEventListener('keydown', e => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+          const multi = ['TD','TH'].includes(e.target.tagName) || e.target.classList.contains('callout-body');
+          if (!multi) { e.preventDefault(); e.target.blur(); }
+        }
+        if ((e.metaKey || e.ctrlKey) && e.key === 's') { e.preventDefault(); saveAll(); }
+      });
+    }
+  });
+
+  if (!editMode) saveAll();
+}
+
+/* ═══════════════════════════════════════════
+   ADD TASK
+═══════════════════════════════════════════ */
+function addTask(btn) {
+  const list = btn.previousElementSibling;
+  if (!list || !list.classList.contains('checklist')) return;
+  const cbid = 'cb_new_' + Date.now();
+  const eid  = 'e_new_' + Date.now();
+  const li = document.createElement('li');
+  li.className = 'check-item';
+  li.innerHTML = `<input type="checkbox" data-cbid="${cbid}"><label contenteditable="true" data-eid="${eid}">New task — click to edit</label>`;
+  li.querySelector('input').addEventListener('change', function() {
+    this.closest('.check-item').classList.toggle('done', this.checked);
+    saveAll();
+  });
+  list.appendChild(li);
+  const lbl = li.querySelector('label');
+  lbl.addEventListener('input', debouncedSave);
+  setTimeout(() => {
+    lbl.focus();
+    document.execCommand('selectAll');
+  }, 50);
+  debouncedSave();
+}
+
+/* ═══════════════════════════════════════════
+   RESET
+═══════════════════════════════════════════ */
+async function resetData() {
+  if (!confirm('Reset all changes and restore the original template? This cannot be undone.')) return;
+  localStorage.removeItem(STORE_KEY);
+  if (useSupabase && sbUrl) {
+    try {
+      await sbFetch('/playbook?id=eq.' + encodeURIComponent(DOC_ID), { method: 'DELETE' });
+    } catch(e) { console.warn('Reset delete failed', e); }
+  }
+  location.reload();
+}
+
+function reconnectDB() {
+  localStorage.removeItem(CREDS_KEY);
+  location.reload();
+}
+
+/* ═══════════════════════════════════════════
+   PROGRESS
+═══════════════════════════════════════════ */
+function updateProgress() {
+  const all  = document.querySelectorAll('.check-item input[type="checkbox"]');
+  const done = document.querySelectorAll('.check-item input[type="checkbox"]:checked');
+  const pct  = Math.round((done.length / all.length) * 100);
+  const fill  = document.querySelector('.progress-fill');
+  const label = document.querySelector('.progress-label span:last-child');
+  if (fill)  fill.style.width = pct + '%';
+  if (label) label.textContent = done.length + ' / ' + all.length + ' tasks complete';
+}
+
+/* ═══════════════════════════════════════════
+   TOAST
+═══════════════════════════════════════════ */
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('save-toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+/* ═══════════════════════════════════════════
+   CHECKBOXES
+═══════════════════════════════════════════ */
+function bindCheckboxes() {
+  document.querySelectorAll('.check-item input[type="checkbox"]').forEach(cb => {
+    cb.addEventListener('change', function() {
+      this.closest('.check-item').classList.toggle('done', this.checked);
+      saveAll();
+      updateProgress();
+    });
+  });
+}
+
+/* ═══════════════════════════════════════════
+   NAV + SCROLL
+═══════════════════════════════════════════ */
+function initNav() {
+  const navItems = document.querySelectorAll('.nav-item');
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting)
+        navItems.forEach(n => n.classList.toggle('active', n.getAttribute('href') === '#' + e.target.id));
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+  document.querySelectorAll('[id]').forEach(s => obs.observe(s));
+
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      e.preventDefault();
+      const t = document.querySelector(a.getAttribute('href'));
+      if (t) t.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+}
+
+/* ═══════════════════════════════════════════
+   GLOBAL CMD+S
+═══════════════════════════════════════════ */
+document.addEventListener('keydown', e => {
+  if ((e.metaKey || e.ctrlKey) && e.key === 's') { e.preventDefault(); saveAll(); }
+});
+
+/* ═══════════════════════════════════════════
+   BOOT
+═══════════════════════════════════════════ */
+assignIds();
+bindCheckboxes();
+updateProgress();
+initNav();
+
+// Add-task buttons
+document.querySelectorAll('.checklist').forEach(list => {
+  const btn = document.createElement('button');
+  btn.className = 'add-task-btn';
+  btn.textContent = '+ Add task';
+  btn.onclick = () => addTask(btn);
+  btn.style.display = 'none';
+  list.after(btn);
+});
+
+// DB status pill in sidebar
+const statusWrap = document.createElement('div');
+statusWrap.style = 'padding: 12px 12px 4px;';
+statusWrap.innerHTML = '<div id="db-pill" class="db-pill offline" onclick="reconnectDB()" title="Click to reconnect"><span class="db-dot"></span>Initialising…</div>';
+document.querySelector('.sidebar-logo').after(statusWrap);
+
+
+
+/* ═══════════════════════════════════════════
+   CONTENT CALENDAR
+═══════════════════════════════════════════ */
+let calYear, calMonth, calEvents = [], editingEventIdx = null;
+
+function calInit() {
+  const now = new Date();
+  calYear  = now.getFullYear();
+  calMonth = now.getMonth();
+  renderCal();
+}
+
+function calPrev() { calMonth--; if (calMonth < 0) { calMonth = 11; calYear--; } renderCal(); }
+function calNext() { calMonth++; if (calMonth > 11) { calMonth = 0;  calYear++; } renderCal(); }
+
+function renderCal() {
+  const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  document.getElementById('cal-label').textContent = months[calMonth] + ' ' + calYear;
+  const grid = document.getElementById('cal-grid');
+  grid.innerHTML = '';
+  const firstDay = new Date(calYear, calMonth, 1).getDay();
+  const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+  const today = new Date();
+
+  for (let i = 0; i < firstDay; i++) {
+    const el = document.createElement('div');
+    el.className = 'cal-day empty';
+    grid.appendChild(el);
+  }
+  for (let d = 1; d <= daysInMonth; d++) {
+    const dateStr = calYear + '-' + String(calMonth+1).padStart(2,'0') + '-' + String(d).padStart(2,'0');
+    const isToday = today.getFullYear()===calYear && today.getMonth()===calMonth && today.getDate()===d;
+    const el = document.createElement('div');
+    el.className = 'cal-day' + (isToday ? ' today' : '');
+    el.innerHTML = '<div class="cal-day-num">' + d + '</div>';
+    const dayEvents = calEvents.filter(e => e.date === dateStr);
+    dayEvents.forEach((ev, ei) => {
+      const evEl = document.createElement('div');
+      evEl.className = 'cal-event ' + (ev.type || 'social');
+      evEl.textContent = ev.title;
+      const globalIdx = calEvents.indexOf(ev);
+      evEl.onclick = (e) => { e.stopPropagation(); openEventModal(globalIdx); };
+      el.appendChild(evEl);
+    });
+    el.onclick = () => { openEventModal(null, dateStr); };
+    grid.appendChild(el);
+  }
+}
+
+function openEventModal(idx = null, prefillDate = null) {
+  editingEventIdx = idx;
+  const ev = idx !== null ? calEvents[idx] : null;
+  document.getElementById('ev-title').value  = ev ? ev.title  : '';
+  document.getElementById('ev-date').value   = ev ? ev.date   : (prefillDate || '');
+  document.getElementById('ev-type').value   = ev ? ev.type   : 'social';
+  document.getElementById('ev-notes').value  = ev ? ev.notes  : '';
+  document.getElementById('ev-status').value = ev ? ev.status : 'planned';
+  document.getElementById('ev-delete-btn').style.display = idx !== null ? 'inline-block' : 'none';
+  document.getElementById('event-modal-backdrop').classList.remove('hidden');
+  document.getElementById('ev-title').focus();
+}
+function closeEventModal() { document.getElementById('event-modal-backdrop').classList.add('hidden'); }
+
+function saveEvent() {
+  const ev = {
+    title:  document.getElementById('ev-title').value.trim() || 'Untitled',
+    date:   document.getElementById('ev-date').value,
+    type:   document.getElementById('ev-type').value,
+    notes:  document.getElementById('ev-notes').value,
+    status: document.getElementById('ev-status').value,
+  };
+  if (editingEventIdx !== null) calEvents[editingEventIdx] = ev;
+  else calEvents.push(ev);
+  closeEventModal();
+  renderCal();
+  saveAll();
+}
+function deleteEvent() {
+  if (editingEventIdx !== null) calEvents.splice(editingEventIdx, 1);
+  closeEventModal();
+  renderCal();
+  saveAll();
+}
+
+/* ═══════════════════════════════════════════
+   EMAIL FLOWS
+═══════════════════════════════════════════ */
+let emailFlows = [
+  { name: 'Welcome Series', tag: '📬', emails: [
+    { subject: `Welcome to [Brand] — here's what makes us different`, timing: 'Immediately on signup', notes: 'Brand story, sustainability mission, what to expect' },
+    { subject: 'How to use your [product] for best results', timing: '2 days later', notes: 'How-to guide, FAQs, link to usage video' },
+    { subject: 'Your first order — 10% off inside', timing: '5 days later', notes: 'Soft promo, social proof, reviews' },
+  ]},
+  { name: 'Abandoned Cart', tag: '🛒', emails: [
+    { subject: `You left something behind…`, timing: '1 hour after abandonment', notes: 'Reminder, product photo, urgency' },
+    { subject: `Still thinking? Here's what others are saying`, timing: '24 hours later', notes: 'Social proof, reviews, answer objections' },
+    { subject: `Last chance — your cart expires soon`, timing: '72 hours later', notes: 'Final nudge, maybe small discount' },
+  ]},
+  { name: 'Post-Purchase', tag: '✅', emails: [
+    { subject: `Your order is confirmed! 🌿`, timing: 'Immediately on purchase', notes: 'Order summary, estimated delivery' },
+    { subject: `Your order has shipped!`, timing: 'When shipped', notes: 'Tracking link, what to expect' },
+    { subject: `How to get the most from your [product]`, timing: '3 days after delivery', notes: 'Usage tips, unboxing moment, dissolve demo link' },
+    { subject: `Love it? Leave us a review`, timing: '7 days after delivery', notes: 'Review request, incentivise with loyalty points' },
+  ]},
+  { name: 'Win-Back', tag: '💌', emails: [
+    { subject: `We miss you — here's 15% off`, timing: '90 days since last order', notes: 'Reactivation discount' },
+    { subject: `Running low? Time to restock 🌿`, timing: '7 days later', notes: 'Replenishment nudge, new products' },
+  ]},
+  { name: 'Subscription Renewal', tag: '🔄', emails: [
+    { subject: `Your next delivery is coming up`, timing: '7 days before renewal', notes: 'Reminder, option to skip, loyalty reward' },
+    { subject: `Thanks for staying with us 🌿`, timing: 'Day of renewal', notes: 'Appreciation, loyalty milestone if applicable' },
+  ]},
+];
+
+function renderEmailFlows() {
+  const list = document.getElementById('email-flows-list');
+  list.innerHTML = '';
+  emailFlows.forEach((flow, fi) => {
+    const card = document.createElement('div');
+    card.className = 'email-flow-card';
+    card.innerHTML = `
+      <div class="email-flow-header" onclick="this.closest('.email-flow-card').classList.toggle('open')">
+        <div class="email-flow-title">${flow.tag} ${flow.name}</div>
+        <div class="email-flow-meta">${flow.emails.length} email${flow.emails.length !== 1 ? 's' : ''} &nbsp;▸</div>
+      </div>
+      <div class="email-flow-body">
+        <div class="email-steps-list">
+          ${flow.emails.map((em, ei) => `
+            <div class="email-step">
+              <div class="email-step-num">${ei+1}</div>
+              <div class="email-step-content">
+                <div class="email-step-subject" contenteditable="true" data-flow="${fi}" data-email="${ei}" data-field="subject">${em.subject}</div>
+                <div class="email-step-timing" contenteditable="true" data-flow="${fi}" data-email="${ei}" data-field="timing">${em.timing}</div>
+                <div style="font-size:12px;color:var(--ink3);margin-top:2px" contenteditable="true" data-flow="${fi}" data-email="${ei}" data-field="notes">${em.notes}</div>
+              </div>
+              <button class="link-btn danger" onclick="deleteEmailStep(${fi},${ei})">✕</button>
+            </div>
+          `).join('')}
+        </div>
+        <button class="add-row-btn" style="margin-top:8px" onclick="addEmailStep(${fi})">+ Add email to flow</button>
+        <div style="margin-top:8px;display:flex;gap:6px;justify-content:flex-end">
+          <button class="btn-sm danger" onclick="deleteEmailFlow(${fi})">🗑 Delete flow</button>
+        </div>
+      </div>`;
+    list.appendChild(card);
+  });
+  // Bind contenteditable changes
+  list.querySelectorAll('[contenteditable][data-flow]').forEach(el => {
+    el.addEventListener('input', () => {
+      const fi = +el.dataset.flow, ei = +el.dataset.email, field = el.dataset.field;
+      emailFlows[fi].emails[ei][field] = el.textContent;
+      debouncedSave();
+    });
+  });
+}
+
+function addEmailFlow() {
+  const name = prompt('Flow name (e.g. "VIP Early Access"):');
+  if (!name) return;
+  emailFlows.push({ name: name.trim(), tag: '📧', emails: [
+    { subject: 'Subject line', timing: 'When to send', notes: 'Notes' }
+  ]});
+  renderEmailFlows();
+  saveAll();
+}
+function deleteEmailFlow(fi) {
+  if (!confirm('Delete this flow?')) return;
+  emailFlows.splice(fi, 1);
+  renderEmailFlows();
+  saveAll();
+}
+function addEmailStep(fi) {
+  emailFlows[fi].emails.push({ subject: 'New email', timing: 'Timing', notes: 'Notes' });
+  renderEmailFlows();
+  saveAll();
+}
+function deleteEmailStep(fi, ei) {
+  emailFlows[fi].emails.splice(ei, 1);
+  renderEmailFlows();
+  saveAll();
+}
+
+/* ═══════════════════════════════════════════
+   LINKS & RESOURCES
+═══════════════════════════════════════════ */
+let links = [], editingLinkIdx = null;
+
+const CAT_META = {
+  sop:         { label: 'SOP',         color: 'badge-green'  },
+  ai:          { label: 'AI Tool',     color: 'badge-purple' },
+  domain:      { label: 'Domain/DNS',  color: 'badge-blue'   },
+  credentials: { label: 'Credentials', color: 'badge-amber'  },
+  supplier:    { label: 'Supplier',    color: 'badge-coral'  },
+  design:      { label: 'Design',      color: 'badge-purple' },
+  analytics:   { label: 'Analytics',  color: 'badge-blue'   },
+  legal:       { label: 'Legal',       color: 'badge-amber'  },
+  other:       { label: 'Other',       color: 'badge-gray'   },
+};
+
+function renderLinks() {
+  const list = document.getElementById('links-list');
+  list.innerHTML = '';
+  if (links.length === 0) {
+    list.innerHTML = '<div style="font-size:13px;color:var(--ink3);padding:12px 0;text-align:center">No links yet — click below to add your first one.</div>';
+    return;
+  }
+  links.forEach((lnk, i) => {
+    const meta = CAT_META[lnk.cat] || CAT_META.other;
+    const row = document.createElement('div');
+    row.className = 'link-row';
+    row.innerHTML = `
+      <span class="link-icon">${lnk.icon || '🔗'}</span>
+      <div class="link-info">
+        <div class="link-title">${lnk.title || 'Untitled'}</div>
+        <div class="link-url">${lnk.url || ''}</div>
+        ${lnk.notes ? `<div style="font-size:11px;color:var(--ink3);margin-top:2px">${lnk.notes}</div>` : ''}
+      </div>
+      <span class="link-tag section-badge ${meta.color}" style="font-size:10px">${meta.label}</span>
+      <div class="link-actions">
+        ${lnk.url ? `<a class="link-btn" href="${lnk.url}" target="_blank" rel="noopener">Open ↗</a>` : ''}
+        <button class="link-btn" onclick="openLinkModal(${i})">Edit</button>
+      </div>`;
+    list.appendChild(row);
+  });
+}
+
+function openLinkModal(idx = null) {
+  editingLinkIdx = idx;
+  const lnk = idx !== null ? links[idx] : null;
+  document.getElementById('lnk-title').value = lnk ? lnk.title : '';
+  document.getElementById('lnk-url').value   = lnk ? lnk.url   : '';
+  document.getElementById('lnk-cat').value   = lnk ? lnk.cat   : 'other';
+  document.getElementById('lnk-icon').value  = lnk ? lnk.icon  : '🔗';
+  document.getElementById('lnk-notes').value = lnk ? lnk.notes : '';
+  document.getElementById('lnk-delete-btn').style.display = idx !== null ? 'inline-block' : 'none';
+  document.getElementById('link-modal-backdrop').classList.remove('hidden');
+  document.getElementById('lnk-title').focus();
+}
+function closeLinkModal() { document.getElementById('link-modal-backdrop').classList.add('hidden'); }
+function saveLink() {
+  const lnk = {
+    title: document.getElementById('lnk-title').value.trim(),
+    url:   document.getElementById('lnk-url').value.trim(),
+    cat:   document.getElementById('lnk-cat').value,
+    icon:  document.getElementById('lnk-icon').value.trim() || '🔗',
+    notes: document.getElementById('lnk-notes').value.trim(),
+  };
+  if (editingLinkIdx !== null) links[editingLinkIdx] = lnk;
+  else links.push(lnk);
+  closeLinkModal();
+  renderLinks();
+  saveAll();
+}
+function deleteLink() {
+  if (editingLinkIdx !== null && confirm('Delete this link?')) {
+    links.splice(editingLinkIdx, 1);
+    closeLinkModal();
+    renderLinks();
+    saveAll();
+  }
+}
+
+/* ═══════════════════════════════════════════
+   PRODUCT CATALOG
+═══════════════════════════════════════════ */
+let products = [];
+
+const STOCK_STATUS = (units, restockDate) => {
+  if (units === '' || units === undefined) return { cls: 'stock-tbd', label: 'TBD' };
+  const n = parseInt(units);
+  if (isNaN(n) || n === 0) return { cls: 'stock-out', label: 'Out of stock' };
+  if (n < 200) return { cls: 'stock-low', label: 'Low stock' };
+  return { cls: 'stock-ok', label: 'In stock' };
+};
+
+function calcMargin(price, cogs) {
+  const p = parseFloat(price), c = parseFloat(cogs);
+  if (!p || !c || p === 0) return '—';
+  return Math.round(((p - c) / p) * 100) + '%';
+}
+
+function renderProducts() {
+  const tbody = document.getElementById('product-tbody');
+  tbody.innerHTML = '';
+  if (products.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="13" style="text-align:center;color:var(--ink3);padding:24px;font-size:13px">No products yet — click below to add your first SKU.</td></tr>';
+    return;
+  }
+  products.forEach((p, i) => {
+    const stock = STOCK_STATUS(p.units, p.restock);
+    const margin = calcMargin(p.price, p.cogs);
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><span style="font-family:var(--mono);font-size:12px;background:var(--bg2);padding:2px 6px;border-radius:3px" contenteditable="true" data-pi="${i}" data-pf="sku">${p.sku||'SKU-001'}</span></td>
+      <td contenteditable="true" data-pi="${i}" data-pf="name" style="font-weight:500;color:var(--ink)">${p.name||'Product name'}</td>
+      <td contenteditable="true" data-pi="${i}" data-pf="format">${p.format||'Tablet'}</td>
+      <td contenteditable="true" data-pi="${i}" data-pf="price" style="font-family:var(--mono)">${p.price||''}</td>
+      <td contenteditable="true" data-pi="${i}" data-pf="cogs" style="font-family:var(--mono)">${p.cogs||''}</td>
+      <td style="font-family:var(--mono);color:${margin==='—'?'var(--ink3)':'var(--accent)'}">${margin}</td>
+      <td contenteditable="true" data-pi="${i}" data-pf="moq" style="font-family:var(--mono)">${p.moq||''}</td>
+      <td contenteditable="true" data-pi="${i}" data-pf="manufacturer">${p.manufacturer||''}</td>
+      <td contenteditable="true" data-pi="${i}" data-pf="units" style="font-family:var(--mono)">${p.units||''}</td>
+      <td contenteditable="true" data-pi="${i}" data-pf="restock" style="font-family:var(--mono);font-size:12px">${p.restock||''}</td>
+      <td><span class="stock-badge ${stock.cls}">${stock.label}</span></td>
+      <td contenteditable="true" data-pi="${i}" data-pf="notes" style="font-size:12px;color:var(--ink3)">${p.notes||''}</td>
+      <td><button class="link-btn danger" onclick="deleteProduct(${i})">✕</button></td>`;
+    tbody.appendChild(tr);
+  });
+
+  // Bind inline edits
+  tbody.querySelectorAll('[contenteditable][data-pi]').forEach(el => {
+    el.addEventListener('blur', () => {
+      const pi = +el.dataset.pi, field = el.dataset.pf;
+      products[pi][field] = el.textContent.trim();
+      // Re-render margin + stock live
+      const tr = el.closest('tr');
+      const marginCell = tr.children[5];
+      const stockCell  = tr.children[10].querySelector('.stock-badge');
+      marginCell.textContent = calcMargin(products[pi].price, products[pi].cogs);
+      marginCell.style.color = marginCell.textContent === '—' ? 'var(--ink3)' : 'var(--accent)';
+      const st = STOCK_STATUS(products[pi].units, products[pi].restock);
+      stockCell.className = 'stock-badge ' + st.cls;
+      stockCell.textContent = st.label;
+      debouncedSave();
+    });
+  });
+}
+
+function addProduct() {
+  products.push({ sku: 'SKU-00' + (products.length+1), name: 'New Product', format: 'Tablet', price: '', cogs: '', moq: '', manufacturer: '', units: '', restock: '', notes: '' });
+  renderProducts();
+  saveAll();
+}
+function deleteProduct(i) {
+  if (!confirm('Remove this product?')) return;
+  products.splice(i, 1);
+  renderProducts();
+  saveAll();
+}
+
+/* ═══════════════════════════════════════════
+   EXPOSE NEW FUNCTIONS TO WINDOW
+═══════════════════════════════════════════ */
+window.calPrev         = calPrev;
+window.calNext         = calNext;
+window.openEventModal  = openEventModal;
+window.closeEventModal = closeEventModal;
+window.saveEvent       = saveEvent;
+window.deleteEvent     = deleteEvent;
+window.addEmailFlow    = addEmailFlow;
+window.deleteEmailFlow = deleteEmailFlow;
+window.addEmailStep    = addEmailStep;
+window.deleteEmailStep = deleteEmailStep;
+window.openLinkModal   = openLinkModal;
+window.closeLinkModal  = closeLinkModal;
+window.saveLink        = saveLink;
+window.deleteLink      = deleteLink;
+window.addProduct      = addProduct;
+window.deleteProduct   = deleteProduct;
+
+/* ── Close modals on backdrop click ── */
+document.getElementById('event-modal-backdrop').addEventListener('click', function(e) {
+  if (e.target === this) closeEventModal();
+});
+document.getElementById('link-modal-backdrop').addEventListener('click', function(e) {
+  if (e.target === this) closeLinkModal();
+});
+
+// Expose functions used in HTML onclick= to window (required for type=module scripts)
+window.connectSupabase = connectSupabase;
+window.skipSetup       = skipSetup;
+window.toggleEdit      = toggleEdit;
+window.saveAll         = saveAll;
+window.resetData       = resetData;
+window.reconnectDB     = reconnectDB;
+window.addTask         = addTask;
+
+// Init new sections
+calInit();
+renderEmailFlows();
+renderLinks();
+renderProducts();
+
+// Kick off Supabase init
+initSupabase();
+</script>
+</body>
+</html>
