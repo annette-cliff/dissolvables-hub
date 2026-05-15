@@ -803,6 +803,53 @@
   .modal-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
   .modal-actions { display: flex; gap: 8px; margin-top: 16px; justify-content: flex-end; }
 
+  /* ── BRAND BRIEF ── */
+  .brief-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 24px;
+    margin: 0 0 24px;
+  }
+  .brief-card-title {
+    font-size: 11px;
+    font-family: var(--mono);
+    color: var(--ink3);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 16px;
+  }
+  .brief-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .brief-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+  .brief-grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 14px; }
+  .brief-row    { margin-top: 14px; }
+  .brief-label {
+    font-size: 11px;
+    font-family: var(--mono);
+    color: var(--ink3);
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .brief-field {
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 8px 10px;
+    font-size: 13px;
+    font-family: var(--sans);
+    color: var(--ink2);
+    background: var(--bg);
+    min-height: 36px;
+    line-height: 1.55;
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+    white-space: pre-wrap;
+    cursor: text;
+  }
+  .brief-field:hover  { background: white; border-color: var(--ink3); }
+  .brief-field:focus  { background: white; border-color: var(--accent); box-shadow: 0 0 0 2px rgba(45,106,79,0.15); }
+  .brief-field.tall   { min-height: 80px; }
+
   @media print { .sidebar, .topbar, #setup-overlay, #save-toast { display: none; } .main { margin-left: 0; } .content { padding: 24px; } }
 </style>
 </head>
@@ -1122,6 +1169,93 @@ CREATE POLICY "public update" ON playbook FOR UPDATE USING (true);</div>
       <div class="section-badge badge-purple">Phase 02</div>
       <h2 class="section-title">Brand Identity</h2>
       <div class="section-desc">Your brand is your moat in a commoditized category. The sustainability story must feel authentic, not performed.</div>
+
+      <!-- ── BRAND BRIEF WORKSPACE ── -->
+      <div class="brief-card">
+        <div class="brief-card-title">🎨 Brand Brief — click any field to edit</div>
+
+        <div class="brief-grid-2">
+          <div>
+            <div class="brief-label">Brand Name</div>
+            <div class="brief-field" contenteditable="true" data-eid="bb-name">Your brand name</div>
+          </div>
+          <div>
+            <div class="brief-label">Tagline</div>
+            <div class="brief-field" contenteditable="true" data-eid="bb-tagline">Your one-line tagline</div>
+          </div>
+        </div>
+
+        <div class="brief-row">
+          <div class="brief-label">Mission Statement</div>
+          <div class="brief-field tall" contenteditable="true" data-eid="bb-mission">We exist to ___. We believe ___. Our promise to customers is ___.</div>
+        </div>
+
+        <div class="brief-row">
+          <div class="brief-label">Positioning Statement — one sentence</div>
+          <div class="brief-field" contenteditable="true" data-eid="bb-positioning">For [target customer] who [problem], [Brand] is the [category] that [benefit], unlike [alternative] which [weakness].</div>
+        </div>
+
+        <div class="brief-row">
+          <div class="brief-label">Sustainability Story — specific &amp; verifiable only</div>
+          <div class="brief-field tall" contenteditable="true" data-eid="bb-sustain">Each tablet eliminates ___ plastic bottles per year. Our packaging is 100% ___. We donate ___% to ___. Our manufacturer is certified ___.</div>
+        </div>
+
+        <div class="brief-grid-3 brief-row">
+          <div>
+            <div class="brief-label">Target Customer</div>
+            <div class="brief-field tall" contenteditable="true" data-eid="bb-customer">Age: ___
+Values: ___
+Shops at: ___
+Follows: ___</div>
+          </div>
+          <div>
+            <div class="brief-label">Brand Voice — We ARE</div>
+            <div class="brief-field tall" contenteditable="true" data-eid="bb-voice-pos">✅ Warm
+✅ Direct
+✅ Playful
+✅ Science-backed
+✅ Humble</div>
+          </div>
+          <div>
+            <div class="brief-label">Brand Voice — We Are NOT</div>
+            <div class="brief-field tall" contenteditable="true" data-eid="bb-voice-neg">❌ Preachy
+❌ Corporate
+❌ Fear-based
+❌ Jargon-heavy
+❌ Elitist</div>
+          </div>
+        </div>
+
+        <div class="brief-grid-2 brief-row">
+          <div>
+            <div class="brief-label">Primary Competitors</div>
+            <div class="brief-field" contenteditable="true" data-eid="bb-competitors">Blueland, Hibar, Ethique, Bite</div>
+          </div>
+          <div>
+            <div class="brief-label">Our Edge Over Them</div>
+            <div class="brief-field" contenteditable="true" data-eid="bb-edge">What we do that they don't...</div>
+          </div>
+        </div>
+
+        <div class="brief-grid-4 brief-row">
+          <div>
+            <div class="brief-label">Primary Color</div>
+            <div class="brief-field" contenteditable="true" data-eid="bb-color1">#______</div>
+          </div>
+          <div>
+            <div class="brief-label">Secondary Color</div>
+            <div class="brief-field" contenteditable="true" data-eid="bb-color2">#______</div>
+          </div>
+          <div>
+            <div class="brief-label">Heading Font</div>
+            <div class="brief-field" contenteditable="true" data-eid="bb-font1">e.g. Playfair Display</div>
+          </div>
+          <div>
+            <div class="brief-label">Body Font</div>
+            <div class="brief-field" contenteditable="true" data-eid="bb-font2">e.g. Inter</div>
+          </div>
+        </div>
+      </div>
 
       <h3 style="font-size:14px;font-weight:600;margin:20px 0 8px;color:var(--ink)">Naming & Positioning</h3>
       <ul class="checklist">
@@ -2412,6 +2546,11 @@ calInit();
 renderEmailFlows();
 renderLinks();
 renderProducts();
+
+// Brief fields — always editable, save on input
+document.querySelectorAll('.brief-field').forEach(el => {
+  el.addEventListener('input', debouncedSave);
+});
 
 // Kick off Supabase init
 initSupabase();
