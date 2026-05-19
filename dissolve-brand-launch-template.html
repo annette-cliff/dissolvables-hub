@@ -1954,7 +1954,7 @@ function collectState() {
   const texts = {}, checks = {};
   document.querySelectorAll('[data-eid]').forEach(el => { texts[el.dataset.eid] = el.innerHTML; });
   document.querySelectorAll('[data-cbid]').forEach(cb => { checks[cb.dataset.cbid] = cb.checked; });
-  return { texts, checks, calEvents, emailFlows, links, products, ts: Date.now() };
+  return { texts, checks, calEvents, emailFlows, links, products, spends: window.spendActions.getSpends(), ts: Date.now() };
 }
 
 /* ═══════════════════════════════════════════
@@ -1977,6 +1977,7 @@ function applyState(data) {
   if (data.emailFlows)  { emailFlows  = data.emailFlows;  renderEmailFlows(); }
   if (data.links)       { links       = data.links;        renderLinks(); }
   if (data.products)    { products    = data.products;     renderProducts(); }
+  if (data.spends)      { window.spendActions.setSpends(data.spends); }
   updateProgress();
 }
 
@@ -2332,7 +2333,9 @@ document.querySelector('.sidebar-logo').after(statusWrap);
 
   window.spendActions = {
     addSpend,
-    deleteSpend
+    deleteSpend,
+    getSpends: () => spends,
+    setSpends: (data) => { spends = data; renderSpends(); }
   };
 })();
 
