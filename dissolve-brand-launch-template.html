@@ -956,7 +956,7 @@ CREATE POLICY "public update" ON playbook FOR UPDATE USING (true);</div>
   <div class="nav-section" style="margin-top:8px">Finance</div>
   <a class="nav-item" href="#budget"><span class="nav-dot" style="background:#8a8478"></span> Budget Tracker</a>
   <a class="nav-item" href="#kpis"><span class="nav-dot" style="background:#8a8478"></span> Launch KPIs</a>
-  <a class="nav-item" href="#spend"><span class="nav-dot" style="background:#b5451b"></span> Actual Spend</a>
+  <!-- <a class="nav-item" href="#spend"><span class="nav-dot" style="background:#b5451b"></span> Actual Spend</a> -->
 
   <div style="padding: 20px 20px 0; margin-top: auto; border-top: 1px solid var(--border); margin-top: 24px; padding-top: 16px;">
     <div style="font-size:11px; color: var(--ink3); font-family: var(--mono);">Target launch</div>
@@ -1555,7 +1555,7 @@ Follows: ___</div>
    <!-- ══════════════════════════════
          ACTUAL SPEND TRACKER
     ══════════════════════════════ -->
-    <div class="section" id="spend">
+    <!-- <div class="section" id="spend">
       <div class="section-badge badge-amber">💸 Finance</div>
       <h2 class="section-title">Actual Spend Tracker</h2>
       <div class="section-desc">Log every real cost as it comes in. Running total updates automatically.</div>
@@ -1597,7 +1597,7 @@ Follows: ___</div>
       </div>
     </div>
 
-    <hr class="divider">
+    <hr class="divider"> -->
 
     <!-- ══════════════════════════════
          MARKETING — CONTENT CALENDAR
@@ -2231,113 +2231,113 @@ document.querySelector('.sidebar-logo').after(statusWrap);
 
 
 
-/* ═══════════════════════════════════════════
-   ACTUAL SPEND TRACKER
-═══════════════════════════════════════════ */
-(function() {
-  let spends = [];
+// /* ═══════════════════════════════════════════
+//    ACTUAL SPEND TRACKER
+// ═══════════════════════════════════════════ */
+// (function() {
+//   let spends = [];
 
-  function renderSpends() {
-    const tbody = document.getElementById('spend-tbody');
-    if (!tbody) return;
+//   function renderSpends() {
+//     const tbody = document.getElementById('spend-tbody');
+//     if (!tbody) return;
 
-    if (spends.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--ink3);padding:20px;font-size:13px">No expenses logged yet — click below to add your first one.</td></tr>';
-      updateSpendTotal();
-      return;
-    }
+//     if (spends.length === 0) {
+//       tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--ink3);padding:20px;font-size:13px">No expenses logged yet — click below to add your first one.</td></tr>';
+//       updateSpendTotal();
+//       return;
+//     }
 
-    tbody.innerHTML = '';
-    spends.forEach((s, i) => {
-      const statusCls = s.status === 'Paid' ? 'spend-paid' : s.status === 'Pending' ? 'spend-pending' : 'spend-planned';
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td contenteditable="true" data-si="${i}" data-sf="date" style="font-family:var(--mono);font-size:12px;white-space:nowrap">${s.date||''}</td>
-        <td contenteditable="true" data-si="${i}" data-sf="cat">${s.cat||'Other'}</td>
-        <td contenteditable="true" data-si="${i}" data-sf="item" style="font-weight:500">${s.item||''}</td>
-        <td contenteditable="true" data-si="${i}" data-sf="notes" style="font-size:12px;color:var(--ink3)">${s.notes||''}</td>
-        <td contenteditable="true" data-si="${i}" data-sf="amount" style="font-family:var(--mono);font-weight:600;color:var(--accent)">${s.amount||''}</td>
-        <td>
-          <select data-si="${i}" data-sf="status" style="font-size:11px;border:1px solid var(--border);border-radius:4px;padding:2px 6px;background:white;color:var(--ink2);font-family:var(--mono)">
-            <option value="Planned"${s.status==='Planned'?' selected':''}>🗓 Planned</option>
-            <option value="Pending"${s.status==='Pending'?' selected':''}>⏳ Pending</option>
-            <option value="Paid"${s.status==='Paid'?' selected':''}>✅ Paid</option>
-          </select>
-        </td>
-        <td><button class="link-btn danger" onclick="window.spendActions.deleteSpend(${i})">✕</button></td>`;
-      tbody.appendChild(tr);
-    });
+//     tbody.innerHTML = '';
+//     spends.forEach((s, i) => {
+//       const statusCls = s.status === 'Paid' ? 'spend-paid' : s.status === 'Pending' ? 'spend-pending' : 'spend-planned';
+//       const tr = document.createElement('tr');
+//       tr.innerHTML = `
+//         <td contenteditable="true" data-si="${i}" data-sf="date" style="font-family:var(--mono);font-size:12px;white-space:nowrap">${s.date||''}</td>
+//         <td contenteditable="true" data-si="${i}" data-sf="cat">${s.cat||'Other'}</td>
+//         <td contenteditable="true" data-si="${i}" data-sf="item" style="font-weight:500">${s.item||''}</td>
+//         <td contenteditable="true" data-si="${i}" data-sf="notes" style="font-size:12px;color:var(--ink3)">${s.notes||''}</td>
+//         <td contenteditable="true" data-si="${i}" data-sf="amount" style="font-family:var(--mono);font-weight:600;color:var(--accent)">${s.amount||''}</td>
+//         <td>
+//           <select data-si="${i}" data-sf="status" style="font-size:11px;border:1px solid var(--border);border-radius:4px;padding:2px 6px;background:white;color:var(--ink2);font-family:var(--mono)">
+//             <option value="Planned"${s.status==='Planned'?' selected':''}>🗓 Planned</option>
+//             <option value="Pending"${s.status==='Pending'?' selected':''}>⏳ Pending</option>
+//             <option value="Paid"${s.status==='Paid'?' selected':''}>✅ Paid</option>
+//           </select>
+//         </td>
+//         <td><button class="link-btn danger" onclick="window.spendActions.deleteSpend(${i})">✕</button></td>`;
+//       tbody.appendChild(tr);
+//     });
 
-    // Bind inline edits
-    tbody.querySelectorAll('[contenteditable][data-si]').forEach(el => {
-      el.addEventListener('blur', () => {
-        const si = +el.dataset.si, field = el.dataset.sf;
-        spends[si][field] = el.textContent.trim();
-        updateSpendTotal();
-        debouncedSave();
-      });
-    });
+//     // Bind inline edits
+//     tbody.querySelectorAll('[contenteditable][data-si]').forEach(el => {
+//       el.addEventListener('blur', () => {
+//         const si = +el.dataset.si, field = el.dataset.sf;
+//         spends[si][field] = el.textContent.trim();
+//         updateSpendTotal();
+//         debouncedSave();
+//       });
+//     });
 
-    // Bind status dropdowns
-    tbody.querySelectorAll('select[data-si]').forEach(sel => {
-      sel.addEventListener('change', () => {
-        spends[+sel.dataset.si].status = sel.value;
-        updateSpendTotal();
-        debouncedSave();
-      });
-    });
+//     // Bind status dropdowns
+//     tbody.querySelectorAll('select[data-si]').forEach(sel => {
+//       sel.addEventListener('change', () => {
+//         spends[+sel.dataset.si].status = sel.value;
+//         updateSpendTotal();
+//         debouncedSave();
+//       });
+//     });
 
-    updateSpendTotal();
-  }
+//     updateSpendTotal();
+//   }
 
-  function updateSpendTotal() {
-    const BUDGET = 25000;
-    const total = spends.reduce((sum, s) => {
-      const n = parseFloat((s.amount || '').toString().replace(/[$,]/g, ''));
-      return sum + (isNaN(n) ? 0 : n);
-    }, 0);
-    const remaining = BUDGET - total;
+//   function updateSpendTotal() {
+//     const BUDGET = 25000;
+//     const total = spends.reduce((sum, s) => {
+//       const n = parseFloat((s.amount || '').toString().replace(/[$,]/g, ''));
+//       return sum + (isNaN(n) ? 0 : n);
+//     }, 0);
+//     const remaining = BUDGET - total;
 
-    const totalEl = document.getElementById('spend-total');
-    const remEl   = document.getElementById('spend-remaining');
-    if (totalEl) totalEl.textContent = '$' + total.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
-    if (remEl) {
-      remEl.textContent = '$' + Math.abs(remaining).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}) + (remaining < 0 ? ' over' : '');
-      remEl.style.color = remaining < 5000 ? 'var(--amber)' : 'var(--accent)';
-      if (remaining < 0) remEl.style.color = '#b91c1c';
-    }
-  }
+//     const totalEl = document.getElementById('spend-total');
+//     const remEl   = document.getElementById('spend-remaining');
+//     if (totalEl) totalEl.textContent = '$' + total.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2});
+//     if (remEl) {
+//       remEl.textContent = '$' + Math.abs(remaining).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}) + (remaining < 0 ? ' over' : '');
+//       remEl.style.color = remaining < 5000 ? 'var(--amber)' : 'var(--accent)';
+//       if (remaining < 0) remEl.style.color = '#b91c1c';
+//     }
+//   }
 
-  function addSpend() {
-    const today = new Date().toISOString().split('T')[0];
-    spends.push({ date: today, cat: 'Other', item: 'New expense', notes: '', amount: '', status: 'Planned' });
-    renderSpends();
-    // Focus the item cell of the new row
-    setTimeout(() => {
-      const rows = document.querySelectorAll('#spend-tbody tr');
-      if (rows.length) {
-        const lastRow = rows[rows.length - 1];
-        const itemCell = lastRow.querySelector('[data-sf="item"]');
-        if (itemCell) { itemCell.focus(); document.execCommand('selectAll'); }
-      }
-    }, 50);
-    saveAll();
-  }
+//   function addSpend() {
+//     const today = new Date().toISOString().split('T')[0];
+//     spends.push({ date: today, cat: 'Other', item: 'New expense', notes: '', amount: '', status: 'Planned' });
+//     renderSpends();
+//     // Focus the item cell of the new row
+//     setTimeout(() => {
+//       const rows = document.querySelectorAll('#spend-tbody tr');
+//       if (rows.length) {
+//         const lastRow = rows[rows.length - 1];
+//         const itemCell = lastRow.querySelector('[data-sf="item"]');
+//         if (itemCell) { itemCell.focus(); document.execCommand('selectAll'); }
+//       }
+//     }, 50);
+//     saveAll();
+//   }
 
-  function deleteSpend(i) {
-    if (!confirm('Remove this expense?')) return;
-    spends.splice(i, 1);
-    renderSpends();
-    saveAll();
-  }
+//   function deleteSpend(i) {
+//     if (!confirm('Remove this expense?')) return;
+//     spends.splice(i, 1);
+//     renderSpends();
+//     saveAll();
+//   }
 
-  window.spendActions = {
-    addSpend,
-    deleteSpend,
-    getSpends: () => spends,
-    setSpends: (data) => { spends = data; renderSpends(); }
-  };
-})();
+//   window.spendActions = {
+//     addSpend,
+//     deleteSpend,
+//     getSpends: () => spends,
+//     setSpends: (data) => { spends = data; renderSpends(); }
+//   };
+// })();
 
 /* ═══════════════════════════════════════════
    CONTENT CALENDAR
